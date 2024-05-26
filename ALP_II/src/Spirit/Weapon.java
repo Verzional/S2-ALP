@@ -6,12 +6,4 @@ public class Weapon extends Equipment{
         super(name, description, requirement, effect, price);
         this.attack = attack;
     }
-
-    public int getAttack() {
-        return attack;
-    }
-
-    public void setAttack(int attack) {
-        this.attack = attack;
-    }
 }

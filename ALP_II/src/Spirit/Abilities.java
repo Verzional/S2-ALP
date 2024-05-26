@@ -4,6 +4,7 @@ public class Abilities {
     String name;
     String effect;
     int requirement;
+    boolean active;
 
     public Abilities(String name, String effect, int requirement) {
         this.name = name;
@@ -33,5 +34,13 @@ public class Abilities {
 
     public void setRequirement(int requirement) {
         this.requirement = requirement;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
