@@ -6,20 +6,26 @@ public class Character {
     protected int level;
     protected int exp;
     protected int health;
+    protected int maxHealth;
+    protected int mana;
+    protected int maxMana;
     protected int attack;
     protected int defense;
-    protected int money;
+    protected double money;
     protected Weapon weapon;
     protected Armor armor;
 
-    public Character(String name, int level, int exp, int health, int attack, int defense, int money) {
+    public Character(String name, int level, int exp, int health, int maxHealth, int attack, int defense, double money, Weapon weapon, Armor armor) {
         this.name = name;
         this.level = level;
         this.exp = exp;
         this.health = health;
+        this.maxHealth = maxHealth;
         this.attack = attack;
         this.defense = defense;
         this.money = money;
+        this.weapon = weapon;
+        this.armor = armor;
     }
 
     public String getName() {
@@ -54,6 +60,30 @@ public class Character {
         this.health = health;
     }
 
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public int getMana() {
+        return mana;
+    }
+
+    public void setMana(int mana) {
+        this.mana = mana;
+    }
+
+    public int getMaxMana() {
+        return maxMana;
+    }
+
+    public void setMaxMana(int maxMana) {
+        this.maxMana = maxMana;
+    }
+
     public int getAttack() {
         return attack;
     }
@@ -70,11 +100,11 @@ public class Character {
         this.defense = defense;
     }
 
-    public int getMoney() {
+    public double getMoney() {
         return money;
     }
 
-    public void setMoney(int money) {
+    public void setMoney(double money) {
         this.money = money;
     }
 
