@@ -16,5 +16,4 @@ public class Player extends Character{
         attack += 2;
         defense += 2;
     }
-    
 }

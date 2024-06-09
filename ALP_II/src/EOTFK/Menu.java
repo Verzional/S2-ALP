@@ -62,7 +62,6 @@ public class Menu {
                                         prologue();
                                 case 2 -> {
                                         loadGame();
-                                        mainMenu();
                                 }
                                 case 3 ->
                                         exitGame();
@@ -154,45 +153,55 @@ public class Menu {
         }
 
         public void battle(int areaID) {
-                Enemy enemy = null;
-                Enemy bossEnemy = null;
-                int enemyID;
-                switch (areaID) {
-                        case 1 -> {
-                                enemyID = rand.nextInt(populate.getCitadelEnemies().size());
-                                enemy = populate.getCitadelEnemies().get(enemyID);
-                                bossEnemy = populate.getBossEnemies().get(0);
-                        }
-                        case 2 -> {
-                                enemyID = rand.nextInt(populate.getWoodsEnemies().size());
-                                enemy = populate.getWoodsEnemies().get(enemyID);
-                                bossEnemy = populate.getBossEnemies().get(1);
-                        }
-                        case 3 -> {
-                                enemyID = rand.nextInt(populate.getCavernsEnemies().size());
-                                enemy = populate.getCavernsEnemies().get(enemyID);
-                                bossEnemy = populate.getBossEnemies().get(2);
-                        }
-                        case 4 -> {
-                                enemyID = rand.nextInt(populate.getPeaksEnemies().size());
-                                enemy = populate.getPeaksEnemies().get(enemyID);
-                                bossEnemy = populate.getBossEnemies().get(3);
-                        }
-                        case 5 -> {
-                                enemyID = rand.nextInt(populate.getDepthsEnemies().size());
-                                enemy = populate.getDepthsEnemies().get(enemyID);
-                                bossEnemy = populate.getBossEnemies().get(4);
-                        }
-                }
-
                 int stage = 1;
                 do {
-                        if (stage == 10){
+                        if (player.getExp() >= player.getLevel() * 100) {
+                                player.levelUp();
+                                System.out.println("You have leveled up!");
+                        }
+
+                        Enemy enemy = null;
+                        Enemy bossEnemy = null;
+                        int enemyID;
+                        
+                        switch (areaID) {
+                                case 1 -> {
+                                        enemyID = rand.nextInt(populate.getCitadelEnemies().size());
+                                        enemy = populate.getCitadelEnemies().get(enemyID);
+                                        bossEnemy = populate.getBossEnemies().get(0);
+                                }
+                                case 2 -> {
+                                        enemyID = rand.nextInt(populate.getWoodsEnemies().size());
+                                        enemy = populate.getWoodsEnemies().get(enemyID);
+                                        bossEnemy = populate.getBossEnemies().get(1);
+                                }
+                                case 3 -> {
+                                        enemyID = rand.nextInt(populate.getCavernsEnemies().size());
+                                        enemy = populate.getCavernsEnemies().get(enemyID);
+                                        bossEnemy = populate.getBossEnemies().get(2);
+                                }
+                                case 4 -> {
+                                        enemyID = rand.nextInt(populate.getPeaksEnemies().size());
+                                        enemy = populate.getPeaksEnemies().get(enemyID);
+                                        bossEnemy = populate.getBossEnemies().get(3);
+                                }
+                                case 5 -> {
+                                        enemyID = rand.nextInt(populate.getDepthsEnemies().size());
+                                        enemy = populate.getDepthsEnemies().get(enemyID);
+                                        bossEnemy = populate.getBossEnemies().get(4);
+                                }
+                        }
+
+                        if (stage == 10) {
                                 enemy = bossEnemy;
                         }
 
-                        System.out.println("\n<--- Battle --->");
-                        System.out.println("An enemy " + enemy.getName() + " has appeared!");
+                        if (stage == 10) {
+                                System.out.println("\n<--- Final Stage --->");
+                        } else {
+                                System.out.println("\n<--- Stage " + stage + " --->");
+                        }
+                        System.out.println(enemy.getName() + " has appeared!");
                         System.out.println("Level: " + enemy.getLevel());
                         System.out.println("Health: " + enemy.getHealth());
                         System.out.println("Attack: " + enemy.getAttack());
@@ -250,6 +259,7 @@ public class Menu {
                                                                         + " gold!");
                                                         enemyDropRate(enemy, player);
                                                         System.out.println("""
+
                                                                         [1] Continue
                                                                         [2] Inventory
                                                                         [3] Return
@@ -319,6 +329,7 @@ public class Menu {
                                                                                 + " gold!");
                                                                 enemyDropRate(enemy, player);
                                                                 System.out.println("""
+
                                                                                 [1] Continue
                                                                                 [2] Inventory
                                                                                 [3] Return
@@ -366,12 +377,16 @@ public class Menu {
                                         }
                                 }
                         } while (player.getHealth() > 0 && enemy.getHealth() > 0);
-                        if (stage == 11){
-                                System.out.println("Area cleared!" +populate.getAreas().get(areaID-1).getName() + " has been conquered!");
-                                player.setExp(player.getExp() + populate.getAreas().get(areaID-1).getCompletionXP());
-                                player.setGold(player.getGold() + populate.getAreas().get(areaID-1).getCompletionGold());
-                                System.out.println("You have gained " + populate.getAreas().get(areaID-1).getCompletionXP() + " exp!");
-                                System.out.println("You have gained " + populate.getAreas().get(areaID-1).getCompletionGold() + " gold!");
+                        if (stage == 11) {
+                                System.out.println("Area cleared!" + populate.getAreas().get(areaID - 1).getName()
+                                                + " has been conquered!");
+                                player.setExp(player.getExp() + populate.getAreas().get(areaID - 1).getCompletionXP());
+                                player.setGold(player.getGold()
+                                                + populate.getAreas().get(areaID - 1).getCompletionGold());
+                                System.out.println("You have gained "
+                                                + populate.getAreas().get(areaID - 1).getCompletionXP() + " exp!");
+                                System.out.println("You have gained "
+                                                + populate.getAreas().get(areaID - 1).getCompletionGold() + " gold!");
                                 System.out.println("You have unlocked the next area!");
                                 populate.getAreas().get(areaID).unlock();
                                 mainMenu();
@@ -380,26 +395,33 @@ public class Menu {
         }
 
         public void enemyDropRate(Enemy enemy, Player player) {
-                int[] dropChances = {5, 15, 35, 55, 75, 95 };
-                int chance = rand.nextInt(100);
-                int rarity = enemy.getRarity();
+                int dropChance;
+                if (enemy.getRarity() == 1) {
+                        dropChance = 50;
+                } else if (enemy.getRarity() == 2) {
+                        dropChance = 40;
+                } else if (enemy.getRarity() == 3) {
+                        dropChance = 30;
+                } else if (enemy.getRarity() == 4) {
+                        dropChance = 20;
+                } else if (enemy.getRarity() == 5){
+                        dropChance = 10;
+                } else {
+                        dropChance = 5;
+                }
 
-                if (rarity >= 1 && rarity <= 6 && chance > dropChances[rarity]) {
+                int chance = rand.nextInt(100);
+                if (chance < dropChance) {
                         int itemChance = rand.nextInt(2);
                         if (itemChance == 0) {
                                 Weapon droppedWeapon = enemy.getWeapon();
                                 weapons.add(droppedWeapon);
+                                System.out.println("You have obtained " + droppedWeapon.getName() + "!");
                         } else {
                                 Armor droppedArmor = enemy.getArmor();
                                 armors.add(droppedArmor);
+                                System.out.println("You have obtained " + droppedArmor.getName() + "!");
                         }
-                }
-        }
-
-        public void enemyDropRates(Enemy enemy, Player player) {
-                int dropChance;
-                if (enemy.getRarity() == 1){
-                        dropChance = 80;
                 }
         }
 
@@ -718,6 +740,7 @@ public class Menu {
                         FileOutputStream fileOut = new FileOutputStream("savegame.ser");
                         ObjectOutputStream out = new ObjectOutputStream(fileOut);
                         out.writeObject(player);
+                        out.writeObject(populate);
                         out.close();
                         fileOut.close();
                         System.out.println("Game saved successfully.");
@@ -731,11 +754,14 @@ public class Menu {
                         FileInputStream fileIn = new FileInputStream("savegame.ser");
                         ObjectInputStream in = new ObjectInputStream(fileIn);
                         player = (Player) in.readObject();
+                        populate = (Populate) in.readObject();
                         in.close();
                         fileIn.close();
                         System.out.println("Game loaded successfully.");
+                        mainMenu();
                 } catch (IOException | ClassNotFoundException e) {
                         System.out.println("Error loading game: " + e.getMessage());
+                        start();
                 }
         }
 
