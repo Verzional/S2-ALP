@@ -85,10 +85,10 @@ public class Menu {
         System.out.print("What is your name?: ");
         String name = scan.next() + scan.nextLine();
 
-        player = new Player(name, 1, 0, 5000, 5000, 50, 50, 1000, 1000, 500,
-                new Weapon("Wooden Sword", "A Normal Wooden Sword", 1, 1, 0, 10),
-                new Armor("Leather Armor", "A Normal Leather Armor", 1,
-                        1, 0, 10, 10));
+        player = new Player(name, 1, 50, 100, 100, 10, 5, 50, 10, 200,
+                new Weapon("Wooden Sword", "A Normal Wooden Sword", 5, 1, 0, 10),
+                new Armor("Leather Armor", "A Normal Leather Armor", 5, 1, 0, 10, 10));
+
         mainMenu();
     }
 
@@ -201,13 +201,14 @@ public class Menu {
             } else {
                 System.out.println("\n<--- Stage " + stage + " --->");
             }
-            System.out.println(enemy.getName() + " has appeared!");
-            System.out.println("Level: " + enemy.getLevel());
-            System.out.println("Health: " + enemy.getHealth());
-            System.out.println("Attack: " + enemy.getAttack());
-            System.out.println("Defense: " + enemy.getDefense());
 
             do {
+                System.out.println("");
+                System.out.println(enemy.getName() + " has appeared!");
+                System.out.println("Level: " + enemy.getLevel());
+                System.out.println("Health: " + enemy.getHealth());
+                System.out.println("Attack: " + enemy.getAttack());
+                System.out.println("Defense: " + enemy.getDefense());
                 System.out.println("\n<--- Player --->");
                 System.out.println("Health: " + player.getHealth());
                 System.out.println("Attack: " + player.getAttack());
