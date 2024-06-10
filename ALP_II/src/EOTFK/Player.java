@@ -9,11 +9,11 @@ public class Player extends Character{
 
     public void levelUp() {
         level++;
-        maxHealth += 10;
+        maxHealth += 20;
         maxMana += 5;
         health = maxHealth;
         mana = maxMana;
-        attack += 2;
-        defense += 2;
+        attack += 10;
+        defense += 5;
     }
 }
