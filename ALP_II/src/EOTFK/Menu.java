@@ -161,11 +161,10 @@ public class Menu {
     }
 
     private void battle(int areaID) {
-        int stage = 1;
+        int stage = 0;
         do {
             check();
-
-            Enemy enemy = getEnemyForStage(stage, areaID);
+            stage++;
 
             if (stage == 10) {
                 System.out.println("\n<--- Final Stage --->");
@@ -173,18 +172,14 @@ public class Menu {
                 System.out.println("\n<--- Stage " + stage + " --->");
             }
 
-            while (player.getHealth() > 0 && enemy.getHealth() > 0) {
-                displayStageInfo(enemy);
-                if (!playerAction(enemy)) {
-                    return;
-                }
-            }
+            Enemy enemy = getEnemyForStage(stage, areaID);
 
+            displayStageInfo(enemy);
+    
             if (stage == 11) {
                 areaCleared(areaID);
                 return;
             }
-            stage++;
         } while (stage <= 10);
     }
 
@@ -243,7 +238,7 @@ public class Menu {
 
         enemy.setAttack(enemy.getAttack() + enemy.getWeapon().getAttackBoost());
         enemy.setDefense(enemy.getDefense() + enemy.getArmor().getDefenseBoost());
-        enemy.setMaxHealth(enemy.getMaxHealth() + enemy.getArmor().getHealthBoost()); 
+        enemy.setMaxHealth(enemy.getMaxHealth() + enemy.getArmor().getHealthBoost());
         enemy.setHealth(enemy.getHealth() + enemy.getArmor().getHealthBoost());
 
         if (stage == 10) {
@@ -254,21 +249,36 @@ public class Menu {
     }
 
     private void displayStageInfo(Enemy enemy) {
-        System.out.println("\n<--- " + enemy.getName() + " -->");
-        System.out.println("Level: " + enemy.getLevel());
-        System.out.println("Health: " + enemy.getHealth() + " / " + enemy.getMaxHealth());
-        System.out.println("Attack: " + enemy.getAttack());
-        System.out.println("Defense: " + enemy.getDefense());
+        while (enemy.getHealth() > 0 && player.getHealth() > 0) {
+            System.out.println("\n<--- " + enemy.getName() + " -->");
+            System.out.println("Level: " + enemy.getLevel());
+            System.out.println("Health: " + enemy.getHealth() + " / " + enemy.getMaxHealth());
+            System.out.println("Attack: " + enemy.getAttack());
+            System.out.println("Defense: " + enemy.getDefense());
 
-        System.out.println("\n<--- Player --->");
-        System.out.println("Level: " + player.getLevel());
-        System.out.println("Health: " + player.getHealth() + " / " + player.getMaxHealth());
-        System.out.println("Mana: " + player.getMana() + " / " + player.getMaxMana());
-        System.out.println("Attack: " + player.getAttack());
-        System.out.println("Defense: " + player.getDefense());
+            System.out.println("\n<--- Player --->");
+            System.out.println("Level: " + player.getLevel());
+            System.out.println("Health: " + player.getHealth() + " / " + player.getMaxHealth());
+            System.out.println("Mana: " + player.getMana() + " / " + player.getMaxMana());
+            System.out.println("Attack: " + player.getAttack());
+            System.out.println("Defense: " + player.getDefense());
+
+            playerAction(enemy);
+
+            if (enemy.getHealth() <= 0) {
+                enemyDefeated(enemy);
+                return;
+            }
+
+            if (player.getHealth() <= 0) {
+                System.out.println("Immortality has its limits...");
+                mainMenu();
+                return;
+            }
+        }
     }
 
-    private boolean playerAction(Enemy enemy) {
+    private void playerAction(Enemy enemy) {
         try {
             System.out.println("\n<--- Actions --->");
             System.out.println("1. Attack");
@@ -279,10 +289,8 @@ public class Menu {
             int choice = scan.nextInt();
 
             switch (choice) {
-                case 1 ->
-                    attack(enemy);
-                case 2 ->
-                    useAbility(enemy);
+                case 1 -> attack(enemy);
+                case 2 -> useAbility(enemy);
                 case 3 -> {
                     useItem();
                     enemyAttack(enemy);
@@ -290,22 +298,11 @@ public class Menu {
                 case 4 -> {
                     System.out.println(player.getName() + " fled from the enemy!");
                     mainMenu();
-                    return false;
                 }
-            }
-
-            if (enemy.getHealth() <= 0) {
-                enemyDefeated(enemy);
-            } else if (player.getHealth() <= 0) {
-                System.out.println("Immortality has its limits...");
-                mainMenu();
-                return false;
             }
         } catch (Exception e) {
             System.out.println("Please choose a valid option!");
         }
-
-        return true;
     }
 
     private void attack(Enemy enemy) {
@@ -324,17 +321,18 @@ public class Menu {
         if (enemy.getAreaID() == 6) {
             int bossMove;
 
-            if (enemy.getBossID() == 1) {
-                bossMove = rand.nextInt(0, 3);
-            } else if (enemy.getBossID() == 2) {
-                bossMove = rand.nextInt(0, 5);
-            } else if (enemy.getBossID() == 3) {
-                bossMove = rand.nextInt(0, 7);
-            } else if (enemy.getBossID() == 4) {
-                bossMove = rand.nextInt(0, 9);
-            } else {
-                bossMove = rand.nextInt(0, 11);
-            }
+            bossMove = switch (enemy.getBossID()) {
+                case 1 ->
+                    rand.nextInt(0, 3);
+                case 2 ->
+                    rand.nextInt(0, 5);
+                case 3 ->
+                    rand.nextInt(0, 7);
+                case 4 ->
+                    rand.nextInt(0, 9);
+                default ->
+                    rand.nextInt(0, 11);
+            };
 
             switch (bossMove) {
                 case 0 -> {
@@ -490,7 +488,6 @@ public class Menu {
                 }
                 System.out.print("Choose an ability: ");
                 int choice = scan.nextInt();
-
                 if (choice < 1 || choice > abilities.size()) {
                     System.out.println("Invalid choice.");
                 } else {
@@ -696,16 +693,12 @@ public class Menu {
 
     private void enemyDefeated(Enemy enemy) {
         enemy.setHealth(enemy.getMaxHealth());
-        enemy.setAttack(enemy.getAttack() - enemy.getWeapon().getAttackBoost());
-        enemy.setDefense(enemy.getDefense() - enemy.getArmor().getDefenseBoost());
-        enemy.setHealth(enemy.getHealth() - enemy.getArmor().getHealthBoost());
         System.out.println("\n" + enemy.getName() + " has been defeated!");
         player.setGold(player.getGold() + enemy.getGold());
         player.setExp(player.getExp() + enemy.getExp());
         System.out.println(player.getName() + " have gained " + enemy.getExp() + " EXP!");
         System.out.println(player.getName() + " have gained " + enemy.getGold() + " Gold!");
         enemyDropRate(enemy);
-
         handleContinueOptions();
     }
 
@@ -723,12 +716,10 @@ public class Menu {
 
             switch (continueChoice) {
                 case 1 -> {
-                    // Continue to the next stage
+                    return;
                 }
-                case 2 ->
-                    inventory();
-                case 3 ->
-                    mainMenu();
+                case 2 -> inventory();
+                case 3 -> mainMenu();
             }
         } catch (Exception e) {
             System.out.println("Please choose a valid option!");
