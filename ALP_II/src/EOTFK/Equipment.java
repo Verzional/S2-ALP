@@ -2,7 +2,7 @@ package EOTFK;
 
 import java.io.Serializable;
 
-public class Equipment implements Serializable{
+public class Equipment implements Serializable {
     private String name;
     private String description;
     private int levelRequirement;

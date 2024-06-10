@@ -2,23 +2,25 @@ package EOTFK;
 
 import java.io.Serializable;
 
-public class Character implements Serializable{
+public class Character implements Serializable {
     private String name;
     protected int level;
     protected int exp;
-    protected int health;
-    protected int maxHealth;
+    protected double health;
+    protected double maxHealth;
     protected int attack;
     protected int defense;
     protected int mana;
     protected int maxMana;
     protected int rarity;
     protected int areaID;
-    protected double gold;
+    protected int bossID;
+    protected int gold;
     private Weapon weapon;
     private Armor armor;
 
-    public Character(String name, int level, int exp, int health, int maxHealth, int attack, int defense, double gold,
+    public Character(String name, int level, int exp, double health, double maxHealth, int attack, int defense,
+            int gold,
             Weapon weapon, Armor armor) {
         this.name = name;
         this.level = level;
@@ -56,19 +58,19 @@ public class Character implements Serializable{
         this.exp = exp;
     }
 
-    public int getHealth() {
+    public double getHealth() {
         return health;
     }
 
-    public void setHealth(int health) {
+    public void setHealth(double health) {
         this.health = health;
     }
 
-    public int getMaxHealth() {
+    public double getMaxHealth() {
         return maxHealth;
     }
 
-    public void setMaxHealth(int maxHealth) {
+    public void setMaxHealth(double maxHealth) {
         this.maxHealth = maxHealth;
     }
 
@@ -120,11 +122,19 @@ public class Character implements Serializable{
         this.areaID = areaID;
     }
 
-    public double getGold() {
+    public int getBossID() {
+        return bossID;
+    }
+
+    public void setBossID(int bossID) {
+        this.bossID = bossID;
+    }
+
+    public int getGold() {
         return gold;
     }
 
-    public void setGold(double gold) {
+    public void setGold(int gold) {
         this.gold = gold;
     }
 

@@ -2,17 +2,20 @@ package EOTFK;
 
 import java.io.Serializable;
 
-public class Abilities implements Serializable{
+public class Abilities implements Serializable {
+
     private String name;
     private String effect;
     private int abilityID;
+    private int manaCost;
     private int unlockLevel;
     private boolean isUnlocked;
 
-    public Abilities(String name, String effect, int abilityID, int unlockLevel, boolean isUnlocked) {
+    public Abilities(String name, String effect, int abilityID, int manaCost, int unlockLevel, boolean isUnlocked) {
         this.name = name;
         this.effect = effect;
         this.abilityID = abilityID;
+        this.manaCost = manaCost;
         this.unlockLevel = unlockLevel;
         this.isUnlocked = isUnlocked;
     }
@@ -41,6 +44,14 @@ public class Abilities implements Serializable{
         this.abilityID = abilityID;
     }
 
+    public int getManaCost() {
+        return manaCost;
+    }
+
+    public void setManaCost(int manaCost) {
+        this.manaCost = manaCost;
+    }
+
     public int getUnlockLevel() {
         return unlockLevel;
     }
@@ -55,11 +66,9 @@ public class Abilities implements Serializable{
 
     public void setUnlocked(boolean unlocked) {
         isUnlocked = unlocked;
-    }   
+    }
 
-    public void unlockAbility(int level) {
-        if (level >= unlockLevel) {
-            isUnlocked = true;
-        }
+    public void unlock() {
+        isUnlocked = true;
     }
 }

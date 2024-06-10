@@ -1,313 +1,1290 @@
 package EOTFK;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.io.Serializable;
+import java.util.*;
+import java.io.*;
 
-public class Populate implements Serializable {
+public class Menu {
 
-    private final List<Area> areas = new ArrayList<>();
-    private final List<Abilities> abilities = new ArrayList<>();
-    private final List<Items> storeItems = new ArrayList<>();
-    private final List<Weapon> storeWeapons = new ArrayList<>();
-    private final List<Armor> storeArmor = new ArrayList<>();
-    private final List<Enemy> citadelEnemies = new ArrayList<>();
-    private final List<Enemy> woodsEnemies = new ArrayList<>();
-    private final List<Enemy> cavernsEnemies = new ArrayList<>();
-    private final List<Enemy> peaksEnemies = new ArrayList<>();
-    private final List<Enemy> depthsEnemies = new ArrayList<>();
-    private final List<Enemy> bossEnemies = new ArrayList<>();
+    Scanner scan = new Scanner(System.in);
+    Random rand = new Random();
 
-    public List<Area> getAreas() {
-        return areas;
+    Player player;
+    Populate populate;
+
+    private final LinkedList<Items> items = new LinkedList<>();
+    private final LinkedList<Abilities> abilities = new LinkedList<>();
+    private final LinkedList<Weapon> weapons = new LinkedList<>();
+    private final LinkedList<Armor> armors = new LinkedList<>();
+
+    public Menu() {
+        populate = new Populate();
+        populateGame();
+        populateItem();
     }
 
-    public List<Abilities> getAbilities() {
-        return abilities;
+    private void populateGame() {
+        populate.createAbility();
+        populate.createArea();
+        populate.createArmor();
+        populate.createWeapon();
+        populate.createItems();
+        populate.createBoss();
+        populate.createCavernsEnemy();
+        populate.createCitadelEnemy();
+        populate.createDepthsEnemy();
+        populate.createPeaksEnemy();
+        populate.createWoodsEnemy();
     }
 
-    public List<Items> getStoreItems() {
-        return storeItems;
+    private void populateItem() {
+        for (int i = 0; i < 5; i++) {
+            items.addFirst(populate.getStoreItems().get(0));
+            items.addFirst(populate.getStoreItems().get(1));
+        }
+        abilities.addFirst(populate.getAbilities().get(0));
     }
 
-    public List<Weapon> getStoreWeapons() {
-        return storeWeapons;
+    public void start() {
+        try {
+            System.out.println("""
+                    <-------------------------------------------------------------------------->
+                          Amidst the ruins of fallen kingdoms and the encroaching darkness,
+                    an undead warrior, cursed with immortality, sets forth on a harrowing quest.
+                          Journey through treacherous landscapes, confront formidable foes,
+                               and delve into the forgotten secrets of a lost kingdom.
+                      Only by facing ancient entities and unraveling the mysteries of the past,
+                           can balance be restored to a desolate world consumed by shadows
+                    <-------------------------------------------------------------------------->
+                    """);
+            System.out.println("""
+                    <--- Echoes of The Forgotten Kingdom --->
+                    1. New Game
+                    2. Load Game
+                    3. Exit Game""");
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+            System.out.println("<--------------------------------------->\n");
+
+            switch (choice) {
+                case 1 ->
+                    prologue();
+                case 2 -> {
+                    loadGame();
+                }
+                case 3 ->
+                    exitGame();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
     }
 
-    public List<Armor> getStoreArmor() {
-        return storeArmor;
+    private void prologue() {
+        System.out.println(
+                """
+                        <--------------------------------------------------------------------------------------->
+                                                You awaken in the ruins of an ancient city,
+                                         devoid of memories but burdened with a sense of purpose.
+                        Guided by whispers from the past, you set forth on a quest to reclaim your lost humanity,
+                                           and unearth the truth behind the kingdom's downfall.
+                        <--------------------------------------------------------------------------------------->
+                                                        """);
+        System.out.print("What is your name immortal one?\n");
+        System.out.print("Name: ");
+        String name = scan.next() + scan.nextLine();
+
+        player = new Player(name, 1, 0, 50, 50, 20, 20, 20, 10, 50,
+                new Weapon("Wooden Sword", "A Normal Wooden Sword", 1, 1, 0, 10),
+                new Armor("Leather Armor", "A Normal Leather Armor", 1,
+                        1, 0, 5, 5));
+        mainMenu();
     }
 
-    public List<Enemy> getCitadelEnemies() {
-        return citadelEnemies;
+    private void mainMenu() {
+        do {
+            try {
+                System.out.println("""
+
+                        <--- Menu --->
+                        1. Travel
+                        2. Shop
+                        3. Inventory
+                        4. Abilities
+                        5. Stats
+                        6. Exit Game""");
+                System.out.print("Choose: ");
+                int choice = scan.nextInt();
+
+                switch (choice) {
+                    case 1 ->
+                        travel();
+                    case 2 ->
+                        shop();
+                    case 3 ->
+                        inventory();
+                    case 4 ->
+                        abilities();
+                    case 5 ->
+                        stats();
+                    case 6 ->
+                        exitGame();
+                }
+            } catch (Exception e) {
+                System.out.println("Please choose a valid option!");
+            }
+        } while (true);
     }
 
-    public List<Enemy> getWoodsEnemies() {
-        return woodsEnemies;
+    private void travel() {
+        try {
+            System.out.println("\n<--- Travel --->");
+            for (Area area : populate.getAreas()) {
+                if (area.isUnlocked()) {
+                    System.out.println(area.getAreaID() + ". " + area.getName());
+                }
+            }
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+
+            if (choice < 1 || choice > populate.getAreas().size()
+                    || !populate.getAreas().get(choice - 1).isUnlocked()) {
+                System.out.println("Invalid choice. Please choose an unlocked area.");
+                return;
+            }
+
+            Area selectedArea = populate.getAreas().get(choice - 1);
+            System.out.println("Traveling to " + selectedArea.getName() + "...");
+            battle(selectedArea.getAreaID());
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
     }
 
-    public List<Enemy> getCavernsEnemies() {
-        return cavernsEnemies;
+    private void battle(int areaID) {
+        int stage = 1;
+        do {
+            check();
+
+            Enemy enemy = getEnemyForStage(stage, areaID);
+
+            if (stage == 10) {
+                System.out.println("\n<--- Final Stage --->");
+            } else {
+                System.out.println("\n<--- Stage " + stage + " --->");
+            }
+
+            while (player.getHealth() > 0 && enemy.getHealth() > 0) {
+                displayStageInfo(enemy);
+                if (!playerAction(enemy)) {
+                    return;
+                }
+            }
+
+            if (stage == 11) {
+                areaCleared(areaID);
+                return;
+            }
+            stage++;
+        } while (stage <= 10);
     }
 
-    public List<Enemy> getPeaksEnemies() {
-        return peaksEnemies;
+    private void check() {
+        if (player.getExp() >= player.getLevel() * 100) {
+            player.levelUp();
+            System.out.println(player.getName() + " have leveled up!");
+        }
+        for (Abilities ability : abilities) {
+            if (!ability.isUnlocked() && player.getLevel() >= ability.getUnlockLevel()) {
+                ability.unlock();
+                System.out.println(player.getName() + " have unlocked a new ability!");
+                System.out.println(ability.getName() + " has been unlocked!");
+                abilities.addFirst(ability);
+            }
+        }
     }
 
-    public List<Enemy> getDepthsEnemies() {
-        return depthsEnemies;
+    private Enemy getEnemyForStage(int stage, int areaID) {
+        Enemy enemy = null;
+        Enemy bossEnemy = null;
+        int enemyID;
+
+        if (stage >= 1 && stage <= 2) {
+            enemyID = 0;
+        } else if (stage >= 3 && stage <= 5) {
+            enemyID = 1;
+        } else if (stage >= 6 && stage <= 8) {
+            enemyID = 2;
+        } else {
+            enemyID = 3;
+        }
+
+        switch (areaID) {
+            case 1 -> {
+                enemy = populate.getCitadelEnemies().get(enemyID);
+                bossEnemy = populate.getBossEnemies().get(0);
+            }
+            case 2 -> {
+                enemy = populate.getWoodsEnemies().get(enemyID);
+                bossEnemy = populate.getBossEnemies().get(1);
+            }
+            case 3 -> {
+                enemy = populate.getCavernsEnemies().get(enemyID);
+                bossEnemy = populate.getBossEnemies().get(2);
+            }
+            case 4 -> {
+                enemy = populate.getPeaksEnemies().get(enemyID);
+                bossEnemy = populate.getBossEnemies().get(3);
+            }
+            case 5 -> {
+                enemy = populate.getDepthsEnemies().get(enemyID);
+                bossEnemy = populate.getBossEnemies().get(4);
+            }
+        }
+
+        enemy.setAttack(enemy.getAttack() + enemy.getWeapon().getAttackBoost());
+        enemy.setDefense(enemy.getDefense() + enemy.getArmor().getDefenseBoost());
+        enemy.setMaxHealth(enemy.getMaxHealth() + enemy.getArmor().getHealthBoost()); 
+        enemy.setHealth(enemy.getHealth() + enemy.getArmor().getHealthBoost());
+
+        if (stage == 10) {
+            enemy = bossEnemy;
+        }
+
+        return enemy;
     }
 
-    public List<Enemy> getBossEnemies() {
-        return bossEnemies;
+    private void displayStageInfo(Enemy enemy) {
+        System.out.println("\n<--- " + enemy.getName() + " -->");
+        System.out.println("Level: " + enemy.getLevel());
+        System.out.println("Health: " + enemy.getHealth() + " / " + enemy.getMaxHealth());
+        System.out.println("Attack: " + enemy.getAttack());
+        System.out.println("Defense: " + enemy.getDefense());
+
+        System.out.println("\n<--- Player --->");
+        System.out.println("Level: " + player.getLevel());
+        System.out.println("Health: " + player.getHealth() + " / " + player.getMaxHealth());
+        System.out.println("Mana: " + player.getMana() + " / " + player.getMaxMana());
+        System.out.println("Attack: " + player.getAttack());
+        System.out.println("Defense: " + player.getDefense());
     }
 
-    public void createArea() {
-        areas.add(new Area("The Forgotten Citadel", "An ancient citadel, shrouded in mystery and shadows", 1,
-                500,
-                500, true));
-        areas.add(new Area("The Whispering Woods", "A dense forest, haunted by the spirits of the past", 2,
-                1000, 1000, false));
-        areas.add(new Area("The Cursed Caverns", "A labyrinth of tunnels, infested with dark creatures", 3,
-                1500,
-                1500, false));
-        areas.add(new Area("The Shadowed Peaks", "A treacherous mountain range, home to ancient evils", 4, 2000,
-                2000, false));
-        areas.add(new Area("The Abyssal Depths", "A dark abyss, where forgotten horrors lie in wait", 5, 2500,
-                2500, false));
+    private boolean playerAction(Enemy enemy) {
+        try {
+            System.out.println("\n<--- Actions --->");
+            System.out.println("1. Attack");
+            System.out.println("2. Use Ability");
+            System.out.println("3. Use Item");
+            System.out.println("4. Flee");
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+
+            switch (choice) {
+                case 1 ->
+                    attack(enemy);
+                case 2 ->
+                    useAbility(enemy);
+                case 3 -> {
+                    useItem();
+                    enemyAttack(enemy);
+                }
+                case 4 -> {
+                    System.out.println(player.getName() + " fled from the enemy!");
+                    mainMenu();
+                    return false;
+                }
+            }
+
+            if (enemy.getHealth() <= 0) {
+                enemyDefeated(enemy);
+            } else if (player.getHealth() <= 0) {
+                System.out.println("Immortality has its limits...");
+                mainMenu();
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+
+        return true;
     }
 
-    public void createAbility() {
-        abilities.add(new Abilities("Inferno Blast", "Unleash an inferno, engulfing enemies in flames", 1, 10,
-                false));
-        abilities.add(new Abilities("Frost Nova", "Summon a frigid storm, freezing foes in their tracks", 2, 20,
-                false));
-        abilities.add(new Abilities("Stormcaller",
-                "Harness the power of thunderstorms, striking enemies with lightning", 3, 30, false));
-        abilities.add(new Abilities("Tectonic Quake",
-                "Shatter the earth beneath your enemies, causing seismic devastation", 4, 40, false));
-        abilities
-                .add(new Abilities("Tempest Fury",
-                        "Summon a tempest, tearing apart enemies with ferocious winds", 5, 50,
-                        false));
-        abilities
-                .add(new Abilities("Shadowstep",
-                        "Fade into the shadows, swiftly reappearing behind your enemies", 6, 60,
-                        false));
-        abilities.add(new Abilities("Ethereal Barrier", "Weave an ethereal barrier, shielding you from harm",
-                7, 70, false));
-        abilities.add(
-                new Abilities("Dragon's Roar",
-                        "Unleash the primal roar of a dragon, paralyzing foes with fear", 8, 80,
-                        false));
-        abilities.add(new Abilities("Soul Siphon",
-                "Draw upon the life force of enemies, replenishing your own vitality", 9, 90, false));
-        abilities.add(new Abilities("Temporal Shift",
-                "Bend time to your will, altering the flow of combat in your favor", 10, 100, false));
+    private void attack(Enemy enemy) {
+        int playerDamage = player.getAttack() - enemy.getDefense();
+
+        playerDamage = Math.max(playerDamage, 1);
+
+        enemy.setHealth(enemy.getHealth() - playerDamage);
+
+        System.out.println("\n" + player.getName() + " dealt " + playerDamage + " damage to the enemy!");
+
+        enemyAttack(enemy);
     }
 
-    public void createItems() {
-        storeItems.add(
-                new Items("Ethereal Elixir",
-                        "Infused with ethereal energy, restores 100 health and mana", 1,
-                        50, 100));
-        storeItems.add(new Items("Phoenix Feather",
-                "Harnesses the essence of the mythical phoenix, reviving you with full health", 2, 100,
-                500));
-        storeItems.add(new Items("Potion of Elemental Resistance",
-                "Grants temporary resistance against elemental attacks", 3, 25, 50));
-        storeItems.add(new Items("Scroll of Teleportation",
-                "Allows instantaneous teleportation to a previously visited location", 4, 50, 100));
-        storeItems.add(new Items("Crystal of Clarity", "Clears the mind of confusion and restores 50 mana", 5,
-                25, 50));
-        storeItems.add(new Items("Amulet of Fortune",
-                "Bestows luck upon the wearer, increasing chance of finding rare loot", 6, 50, 100));
-        storeItems.add(new Items("Vial of Shadows",
-                "Cloaks the user in shadows, granting temporary invisibility", 7, 25, 50));
-        storeItems.add(new Items("Basilisk Blood",
-                "Confers the petrifying gaze of a basilisk, paralyzing enemies", 8, 50, 100));
+    private void enemyAttack(Enemy enemy) {
+        if (enemy.getAreaID() == 6) {
+            int bossMove;
 
-        storeItems.add(new Items("Orb of Enlightenment", "Reveals hidden knowledge, granting experience points",
-                9, 25, 50));
+            if (enemy.getBossID() == 1) {
+                bossMove = rand.nextInt(0, 3);
+            } else if (enemy.getBossID() == 2) {
+                bossMove = rand.nextInt(0, 5);
+            } else if (enemy.getBossID() == 3) {
+                bossMove = rand.nextInt(0, 7);
+            } else if (enemy.getBossID() == 4) {
+                bossMove = rand.nextInt(0, 9);
+            } else {
+                bossMove = rand.nextInt(0, 11);
+            }
 
-        storeItems.add(
-                new Items("Chalice of Renewal",
-                        "Renews vitality and strength, restoring 75 health and mana", 10, 25,
-                        50));
+            switch (bossMove) {
+                case 0 -> {
+                    int enemyDamage = enemy.getAttack() - player.getDefense();
+
+                    enemyDamage = Math.max(enemyDamage, 1);
+
+                    player.setHealth(player.getHealth() - enemyDamage);
+
+                    System.out.println(
+                            enemy.getName() + " dealt " + enemyDamage + " damage to " + player.getName() + "!");
+                }
+
+                case 1 -> {
+                    System.out.println("\n" + enemy.getName() + " used Inferno Blast!");
+                    double infernoDamage = Math.ceil(enemy.getAttack() * 1.25 - player.getDefense());
+                    player.setHealth(player.getHealth() - infernoDamage);
+                    System.out.println(enemy.getName() + " have dealt " + infernoDamage + " inferno damage!");
+                    populate.burnPlayer(player);
+                }
+
+                case 2 -> {
+                    System.out.println("\n" + enemy.getName() + " used Frost Nova!");
+                    double frostDamage = Math.ceil(enemy.getAttack() * 1.25 - player.getDefense());
+                    player.setHealth(player.getHealth() - frostDamage);
+                    System.out.println(enemy.getName() + " have dealt " + frostDamage + " frost damage!");
+                    populate.freeze();
+                    if (populate.freeze() == true) {
+                        System.out.println(player.getName() + " has been frozen for one turn!");
+                        enemyAttack(enemy);
+                    } else {
+                        scan.nextLine();
+                    }
+                }
+
+                case 3 -> {
+                    System.out.println("\n" + enemy.getName() + " used Stormcaller!");
+                    double stormDamage = Math.ceil(enemy.getAttack() * 1.5 - player.getDefense());
+                    player.setHealth(player.getHealth() - stormDamage);
+                    System.out.println(enemy.getName() + " have dealt " + stormDamage + " storm damage!");
+                    populate.paralyze();
+                    if (populate.paralyze() == true) {
+                        System.out.println(player.getName() + " has been paralyzed for one turn!");
+                        enemyAttack(enemy);
+                    } else {
+                        scan.nextLine();
+                    }
+                }
+
+                case 4 -> {
+                    System.out.println("\n" + enemy.getName() + " used Tectonic Quake!");
+                    double stormDamage = Math.ceil(enemy.getAttack() * 1.5 - player.getDefense());
+                    player.setHealth(player.getHealth() - stormDamage);
+                    System.out.println(enemy.getName() + " have dealt " + stormDamage + " quake damage!");
+                    populate.confuse();
+                    if (populate.confuse() == true) {
+                        System.out.println(player.getName() + " is confused!");
+                        playerConfused();
+                    } else {
+                        scan.nextLine();
+                    }
+                }
+
+                case 5 -> {
+                    System.out.println("\n" + enemy.getName() + " used Glacial Cataclysm!");
+                    double glacialDamage = Math.ceil(enemy.getAttack() * 1.75 - player.getDefense());
+                    player.setHealth(player.getHealth() - glacialDamage);
+                    System.out.println(enemy.getName() + " have dealt " + glacialDamage + " glacial damage!");
+                    populate.freeze();
+                    if (populate.freeze() == true) {
+                        System.out.println(player.getName() + " has been frozen for one turn!");
+                        enemyAttack(enemy);
+                    } else {
+                        scan.nextLine();
+                    }
+                }
+
+                case 6 -> {
+                    System.out.println("\n" + enemy.getName() + " used Shadowstep!");
+                    double shadowDamage = Math.ceil(enemy.getAttack() * 1.75 - player.getDefense());
+                    player.setHealth(player.getHealth() - shadowDamage);
+                    System.out.println(enemy.getName() + " have dealt " + shadowDamage + " shadow damage!");
+                    populate.confuse();
+                    if (populate.confuse() == true) {
+                        System.out.println(player.getName() + " is confused!");
+                        playerConfused();
+                    } else {
+                        scan.nextLine();
+                    }
+                }
+
+                case 7 -> {
+                    System.out.println("\n" + enemy.getName() + " used Scorching Flames!");
+                    double flameDamage = Math.ceil(enemy.getAttack() * 2 - player.getDefense());
+                    player.setHealth(player.getHealth() - flameDamage);
+                    System.out.println(enemy.getName() + " have dealt " + flameDamage + " flame damage!");
+                    populate.burnPlayer(player);
+                }
+
+                case 8 -> {
+                    System.out.println("\n" + enemy.getName() + " used Dragon's Roar!");
+                    double roarDamage = Math.ceil(enemy.getAttack() * 2 - player.getDefense());
+                    player.setHealth(player.getHealth() - roarDamage);
+                    System.out.println(enemy.getName() + " have dealt " + roarDamage + " roar damage!");
+                    populate.paralyze();
+                    if (populate.paralyze() == true) {
+                        System.out.println(player.getName() + " has been paralyzed for one turn!");
+                        enemyAttack(enemy);
+                    } else {
+                        scan.nextLine();
+                    }
+                }
+
+                case 9 -> {
+                    System.out.println("\n" + enemy.getName() + " used Soul Siphon!");
+                    double soulDamage = Math.ceil(enemy.getAttack() * 2 - player.getDefense());
+                    player.setHealth(player.getHealth() - soulDamage);
+                    enemy.setHealth(enemy.getHealth() + soulDamage);
+                    System.out.println(
+                            enemy.getName() + " have stolen " + soulDamage + " health from " + player.getName() + "!");
+                }
+
+                case 10 -> {
+                    System.out.println("\n" + enemy.getName() + " used Celestial Wrath!");
+                    double wrathDamage = Math.ceil(enemy.getAttack() * 2.5 - player.getDefense());
+                    player.setHealth(player.getHealth() - wrathDamage);
+                    System.out.println(enemy.getName() + " have awoken the celestial's wrath! " + wrathDamage
+                            + " damage has been bestowed upon " + player.getName() + "!");
+                }
+            }
+        } else {
+            int enemyDamage = enemy.getAttack() - player.getDefense();
+
+            enemyDamage = Math.max(enemyDamage, 1);
+
+            player.setHealth(player.getHealth() - enemyDamage);
+
+            System.out.println(enemy.getName() + " dealt " + enemyDamage + " damage to " + player.getName() + "!");
+        }
     }
 
-    public void createWeapon() {
-        storeWeapons.add(new Weapon("Elven Longbow", "A masterfully crafted longbow of elven design", 7, 5, 150,
-                9));
-        storeWeapons.add(new Weapon("Dwarven Warhammer", "A massive warhammer forged in dwarven halls", 8, 10,
-                200, 20));
-        storeWeapons.add(
-                new Weapon("Stormcaller Staff", "A staff imbued with the power of thunderstorms", 9, 15,
-                        250, 26));
-        storeWeapons.add(new Weapon("Flamebrand Katana", "A katana enchanted with the essence of fire", 10, 20,
-                300, 35));
-        storeWeapons.add(new Weapon("Soulreaper Scythe", "A grim scythe that reaps souls with every swing", 11,
-                25,
-                350, 43));
-        storeWeapons.add(new Weapon("Frostbite Axe", "An axe forged in the heart of a blizzard", 12, 30, 400,
-                52));
-        storeWeapons.add(new Weapon("Venomous Dagger", "A dagger coated in deadly venom", 13, 35, 450, 59));
-        storeWeapons.add(new Weapon("Celestial Staff", "A staff infused with celestial energies", 14, 40, 500,
-                70));
-        storeWeapons.add(new Weapon("Voidblade Saber", "A saber crafted from the essence of the void", 15, 45,
-                550, 76));
-        storeWeapons.add(new Weapon("Arcane Wand", "A wand crackling with arcane power", 16, 50, 600, 100));
+    private void useAbility(Enemy enemy) {
+        try {
+            if (abilities.isEmpty()) {
+                System.out.println("\n<--- Ability --->");
+                System.out.println("No abilities available.");
+            } else {
+                System.out.println("\n<--- Abilities --->");
+                for (int i = 0; i < abilities.size(); i++) {
+                    System.out.println(
+                            (i + 1) + ". " + abilities.get(i).getName() + " || " + abilities.get(i).getEffect() + " || "
+                                    + abilities.get(i).getManaCost() + " Mana");
+                }
+                System.out.print("Choose an ability: ");
+                int choice = scan.nextInt();
+
+                if (choice < 1 || choice > abilities.size()) {
+                    System.out.println("Invalid choice.");
+                } else {
+                    Abilities selectedAbility = abilities.get(choice - 1);
+                    int abilityID = selectedAbility.getAbilityID();
+                    applyAbility(enemy, abilityID);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
     }
 
-    public void createArmor() {
-        storeArmor.add(new Armor("Shadowweave Vestments", "Dark vestments woven from shadowy threads", 7, 5,
-                150,
-                7, 11));
-        storeArmor.add(new Armor("Stormforged Mail", "Mail armor forged in the heart of a raging storm", 8, 10,
-                200, 9, 14));
-        storeArmor.add(new Armor("Mithril Plate", "Durable plate armor crafted from rare mithril", 9, 15, 250,
-                25, 32));
-        storeArmor.add(new Armor("Phoenix Guard", "Armor infused with the essence of a phoenix", 10, 20, 300,
-                35, 40));
-        storeArmor.add(new Armor("Dragonscale Hauberk", "Hauberk made from the scales of a legendary dragon",
-                11, 25, 350, 44, 47));
-        storeArmor.add(new Armor("Elven Silk Robes", "Exquisite robes made from enchanted elven silk", 12, 30,
-                400, 53, 60));
-        storeArmor.add(new Armor("Dragon Scale Armor", "Armor crafted from the scales of a slain dragon", 13,
-                35, 450, 59, 73));
-        storeArmor.add(
-                new Armor("Celestial Plate", "Armor infused with celestial energy", 14, 40, 500, 67,
-                        95));
-        storeArmor.add(new Armor("Shadow Cloak", "Cloak that grants invisibility in shadows", 15, 45, 550, 77,
-                117));
-        storeArmor.add(new Armor("Titanium Warplate", "Imposing warplate forged from rare titanium", 16, 50,
-                600, 79, 123));
+    private void applyAbility(Enemy enemy, int abilityID) {
+        switch (abilityID) {
+            case 1 -> {
+                if (player.getMana() < 5) {
+                    System.out.println("Not enough mana to cast Inferno Blast!");
+                } else {
+                    System.out.println("\nInferno Blast!");
+                    double infernoDamage = Math.ceil(player.getAttack() * 1.25 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - infernoDamage);
+                    System.out.println(player.getName() + " dealt " + infernoDamage + " inferno damage!");
+                    player.setMana(player.getMana() - 5);
+                    populate.burn(enemy);
+                    enemyAttack(enemy);
+                }
+            }
+
+            case 2 -> {
+                if (player.getMana() < 5) {
+                    System.out.println("Not enough mana to cast Frost Nova!");
+                } else {
+                    System.out.println("\nFrost Nova!");
+                    double frostDamage = Math.ceil(player.getAttack() * 1.25 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - frostDamage);
+                    System.out.println(player.getName() + " dealt " + frostDamage + " frost damage!");
+                    player.setMana(player.getMana() - 5);
+                    populate.freeze();
+                    if (populate.freeze() == true) {
+                        System.out.println(enemy.getName() + " has been frozen for one turn!");
+                    } else {
+                        enemyAttack(enemy);
+                    }
+                }
+            }
+
+            case 3 -> {
+                if (player.getMana() < 7) {
+                    System.out.println("Not enough mana to cast Stormcaller!");
+                } else {
+                    System.out.println("\nStormcaller!");
+                    double stormDamage = Math.ceil(player.getAttack() * 1.5 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - stormDamage);
+                    System.out.println(player.getName() + " dealt " + stormDamage + " storm damage!");
+                    player.setMana(player.getMana() - 7);
+                    populate.paralyze();
+                    if (populate.paralyze() == true) {
+                        System.out.println(enemy.getName() + " has been paralyzed for one turn!");
+                    } else {
+                        enemyAttack(enemy);
+                    }
+                }
+            }
+
+            case 4 -> {
+                if (player.getMana() < 7) {
+                    System.out.println("Not enough mana to cast Tectonic Quake!");
+                } else {
+                    System.out.println("\nTectonic Quake!");
+                    double quakeDamage = Math.ceil(player.getAttack() * 1.5 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - quakeDamage);
+                    System.out.println(player.getName() + " dealt " + quakeDamage + " quake damage!");
+                    player.setMana(player.getMana() - 7);
+                    populate.confuse();
+                    if (populate.confuse() == true) {
+                        System.out.println(enemy.getName() + " is confused!");
+                        enemyConfused(enemy);
+                    } else {
+                        enemyAttack(enemy);
+                    }
+                }
+            }
+
+            case 5 -> {
+                if (player.getMana() < 10) {
+                    System.out.println("Not enough mana to cast Glacial Cataclysm!");
+                } else {
+                    System.out.println("\nGlacial Cataclysm!");
+                    double glacialDamage = Math.ceil(player.getAttack() * 1.75 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - glacialDamage);
+                    System.out.println(player.getName() + " dealt " + glacialDamage + " glacial damage!");
+                    player.setMana(player.getMana() - 10);
+                    populate.freeze();
+                    if (populate.freeze() == true) {
+                        System.out.println(enemy.getName() + " has been frozen for one turn!");
+                    } else {
+                        enemyAttack(enemy);
+                    }
+                }
+            }
+
+            case 6 -> {
+                if (player.getMana() < 10) {
+                    System.out.println("Not enough mana to cast Shadowstep!");
+                } else {
+                    System.out.println("\nShadowstep!");
+                    double shadowDamage = Math.ceil(player.getAttack() * 1.75 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - shadowDamage);
+                    System.out.println(player.getName() + " dealt " + shadowDamage + " shadow damage!");
+                    player.setMana(player.getMana() - 10);
+                    populate.confuse();
+                    if (populate.confuse() == true) {
+                        System.out.println(enemy.getName() + " is confused!");
+                        enemyConfused(enemy);
+                    } else {
+                        enemyAttack(enemy);
+                    }
+                }
+            }
+
+            case 7 -> {
+                if (player.getMana() < 15) {
+                    System.out.println("Not enough mana to cast Scorching Flames!");
+                } else {
+                    System.out.println("\nScorching Flames!");
+                    double flameDamage = Math.ceil(player.getAttack() * 2 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - flameDamage);
+                    System.out.println(player.getName() + " dealt " + flameDamage + " flame damage!");
+                    player.setMana(player.getMana() - 15);
+                    populate.burn(enemy);
+                    enemyAttack(enemy);
+                }
+            }
+
+            case 8 -> {
+                if (player.getMana() < 15) {
+                    System.out.println("Not enough mana to cast Dragon's Roar!");
+                } else {
+                    System.out.println("\nDragon's Roar!");
+                    double roarDamage = Math.ceil(player.getAttack() * 2 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - roarDamage);
+                    System.out.println(player.getName() + " dealt " + roarDamage + " roar damage!");
+                    player.setMana(player.getMana() - 15);
+                    populate.paralyze();
+                    if (populate.paralyze() == true) {
+                        System.out.println(enemy.getName() + " has been paralyzed for one turn!");
+                    } else {
+                        enemyAttack(enemy);
+                    }
+                }
+            }
+
+            case 9 -> {
+                if (player.getMana() < 20) {
+                    System.out.println("Not enough mana to cast Soul Siphon!");
+                } else {
+                    System.out.println("\nSoul Siphon!");
+                    double soulDamage = Math.ceil(player.getAttack() * 2 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - soulDamage);
+                    player.setHealth(player.getHealth() + soulDamage);
+                    System.out.println(player.getName() + " has stolen " + soulDamage + " health from the enemy!");
+                    player.setMana(player.getMana() - 20);
+                    enemyAttack(enemy);
+                }
+            }
+
+            case 10 -> {
+                if (player.getMana() < 30) {
+                    System.out.println("Not enough mana to cast Celestial Wrath!");
+                } else {
+                    System.out.println("\nCelestial Wrath!");
+                    double wrathDamage = Math.ceil(player.getAttack() * 2.5 - enemy.getDefense());
+                    enemy.setHealth(enemy.getHealth() - wrathDamage);
+                    System.out.println(player.getName() + " has awoken the celestial's wrath! " + wrathDamage
+                            + " damage has been bestowed upon" + enemy.getName() + "!");
+                    player.setMana(player.getMana() - 30);
+                    enemyAttack(enemy);
+                }
+            }
+        }
     }
 
-    public void createCitadelEnemy() {
-        citadelEnemies.add(new Enemy("Bonecrusher Warrior", 2, 50, 35, 35, 8, 4, 1, 1, 10,
-                
-                new Weapon("Bone Axe", "A powerful axe made from bone", 17, 2, 30, 5),
-                new Armor("Bone Armor", "Armor crafted from sturdy bones", 17, 2, 30, 5,
-                        10)));
-        citadelEnemies.add(new Enemy("Cursed Phantom Prince", 4, 75, 50, 50, 11, 7, 1, 1, 20,
-                new Weapon("Phantom Blade", "A spectral blade that curses its victims", 18, 4, 40,
-                        8),
-                new Armor("Phantom Cloak", "Cloak that renders the wearer ethereal", 18, 4, 40, 8,
-                        12)));
-        citadelEnemies.add(new Enemy("Necroshade Princess", 6, 100, 70, 70, 15, 8, 1, 1, 30,
-                new Weapon("Necro Staff", "Staff imbued with life-draining magic", 19, 6, 40, 10),
-                new Armor("Shade Robe", "Robe that offers protection against shadows", 19, 6, 40, 10,
-                        15)));
-        citadelEnemies.add(new Enemy("Titan of Shadows", 8, 150, 90, 90, 18, 12, 1, 1, 40,
-                new Weapon("Shadow Hammer", "Massive hammer that stuns enemies with darkness", 20, 8,
-                        50, 12),
-                new Armor("Titan Armor", "Heavy armor with shadow-infused shield", 20, 8, 50, 13,
-                        18)));
-    }
-    
-    public void createWoodsEnemy() {
-        woodsEnemies.add(new Enemy("Direbane Wolf", 12, 325, 275, 275, 35, 25, 2, 2, 210,
-                new Weapon("Dire Fangs", "Sharp fangs that cause bleeding", 21, 12, 80, 22),
-                new Armor("Wolf Pelt", "Pelt providing evasion against attacks", 21, 12, 80, 22,
-                        27)));
-        woodsEnemies.add(new Enemy("Spectral Wraith", 14, 350, 295, 295, 38, 29, 2, 2, 220,
-                new Weapon("Wraith Claws", "Claws that inflict fear in enemies", 22, 14, 90, 24),
-                new Armor("Spectral Veil", "Veil granting incorporeal protection", 22, 14, 90, 23,
-                        30)));
-        woodsEnemies.add(new Enemy("Ethereal Forest Spirit", 16, 375, 310, 310, 42, 32, 2, 2, 230,
-                new Weapon("Spirit Branch", "Branch with entangling properties", 23, 16, 100, 27),
-                new Armor("Forest Essence", "Essence providing regeneration", 23, 16, 100, 27,
-                        33)));
-        woodsEnemies.add(new Enemy("Duskblade Elf", 18, 400, 330, 330, 45, 35, 2, 2, 240,
-                new Weapon("Duskblade", "Blade coated with poison", 24, 18, 110, 30),
-                new Armor("Elven Armor", "Armor enhancing agility", 24, 18, 110, 30,
-                        35)));
-    }
-   
-    public void createCavernsEnemy() {
-        cavernsEnemies.add(new Enemy("Goblin Warlock", 22, 825, 475, 475, 90, 50, 3, 3, 410,
-                new Weapon("Warlock Staff", "Staff imbued with hexing magic", 25, 22, 150, 37),
-                new Armor("Goblin Robes", "Robes providing magic resistance", 25, 22, 150, 40, 43)));
-        cavernsEnemies.add(new Enemy("Ogre Mauler", 24, 850, 500, 500, 93, 52, 3, 3, 420,
-                new Weapon("Maul", "Heavy maul for crushing foes", 26, 24, 160, 40),
-                new Armor("Ogre Hide", "Thick hide providing toughness", 26, 24, 160, 42, 45)));
-        cavernsEnemies.add(new Enemy("Orc Overlord", 26, 900, 525, 525, 95, 55, 3, 3, 430,
-                new Weapon("Overlord Axe", "Massive axe wielded by orc overlords", 27, 26, 170, 45),
-                new Armor("Orc Plate", "Plate armor enhancing strength", 27, 26, 170, 45, 48)));
-        cavernsEnemies.add(new Enemy("Troll Ravager", 28, 925, 575, 575, 110, 58, 3, 3, 440,
-                new Weapon("Ravager Club", "Club used by trolls for smashing", 29, 28, 180, 48),
-                new Armor("Troll Armor", "Armor providing regeneration", 29, 28, 180, 50, 50)));
-    }
-     
+    private void enemyConfused(Enemy enemy) {
+        int enemyDamage = enemy.getAttack() - enemy.getDefense();
 
-    public void createPeaksEnemy() {
-        peaksEnemies.add(new Enemy("Frostfire Wyvern", 32, 1325, 675, 675, 133, 72, 4, 4, 610,
-                new Weapon("Frostfire Breath", "Freezes and burns enemies", 30, 32, 210, 55),
-                new Armor("Wyvern Scales", "Scales providing elemental resistance", 30, 32, 210, 55,
-                        65)));
+        enemyDamage = Math.max(enemyDamage, 1);
 
-        peaksEnemies.add(new Enemy("Glacial Dragon", 34, 1350, 700, 700, 135, 75, 4, 4, 620,
-                new Weapon("Glacial Claws", "Claws with freezing power", 31, 34, 220, 57),
-                new Armor("Dragonhide", "Tough hide with frost aura", 31, 34, 220, 58, 70)));
+        enemy.setHealth(enemy.getHealth() - enemyDamage);
 
-        peaksEnemies.add(new Enemy("Inferno Elemental", 36, 1375, 750, 750, 138, 77, 4, 4, 630,
-                new Weapon("Inferno Flame", "Flames that engulf and burn", 32, 36, 230, 60),
-                new Armor("Flame Core", "Core emitting a shield of fire", 32, 36, 230, 60, 75)));
-
-        peaksEnemies.add(new Enemy("Earthshatter Golem", 38, 1400, 775, 775, 142, 80, 4, 4, 640,
-                new Weapon("Earthshatter Fist", "Fist causing seismic shockwaves", 33, 38, 240, 63),
-                new Armor("Golem Stone", "Stone with an earth-shielding property", 33, 38, 240, 62,
-                        80)));
+        System.out.println(enemy.getName() + " dealt " + enemyDamage + " damage to itself!");
     }
 
-    public void createDepthsEnemy() {
-        depthsEnemies.add(new Enemy("Abyssal Nightmare", 42, 1850, 875, 875, 182, 98, 5, 5, 810,
-                new Weapon("Nightmare Scythe", "Scythe inducing fear", 34, 42, 270, 73),
-                new Armor("Abyssal Shroud", "Shroud emitting darkness aura", 34, 42, 270, 72, 110)));
+    private void playerConfused() {
+        int playerDamage = player.getAttack() - player.getDefense();
 
-        depthsEnemies.add(new Enemy("Voidshade Demon", 44, 1875, 50, 50, 185, 100, 5, 5, 820,
-                new Weapon("Void Claws", "Claws draining life force", 35, 44, 280, 75),
-                new Armor("Void Armor", "Armor providing shielding from void", 35, 44, 280, 75, 115)));
+        playerDamage = Math.max(playerDamage, 1);
 
-        depthsEnemies.add(new Enemy("Soul Devourer", 46, 1900, 50, 50, 189, 103, 5, 5, 830,
-                new Weapon("Soul Reaver", "Reaver absorbing souls", 36, 46, 290, 77),
-                new Armor("Devourer Armor", "Armor with life-stealing properties", 36, 46, 290, 78,
-                        120)));
+        player.setHealth(player.getHealth() - playerDamage);
 
-        depthsEnemies.add(new Enemy("Cataclysm Bringer", 48, 1925, 50, 50, 195, 105, 5, 5, 840,
-                new Weapon("Cataclysm Blade", "Blade bringing destruction", 37, 48, 300, 82),
-                new Armor("Cataclysm Plate", "Plate emitting cataclysmic aura", 37, 48, 300, 80, 125)));
-    }
-    
-    public void createBoss() {
-        bossEnemies.add(new Enemy("The Dark Knight", 10, 300, 250, 250, 30, 20, 6, 1, 200,
-                new Weapon("Dark Sword", "Sword that slashes through darkness", 2, 10, 70, 20),
-                new Armor("Knight's Armor", "Armor worn by the legendary dark knight", 2, 10, 70, 20,
-                        25)));
-
-        bossEnemies.add(new Enemy("Lunar Werewolf", 20, 800, 450, 450, 80, 45, 6, 2, 400,
-                new Weapon("Lunar Claws", "Claws imbued with the power of the moon", 3, 20, 130, 35),
-                new Armor("Werewolf Fur", "Fur that grants lunar regeneration", 3, 20, 130, 37,
-                        40)));
-
-        bossEnemies.add(new Enemy("Chthonic Dreadlord", 30, 1300, 650, 650, 130, 70, 6, 3, 600,
-                new Weapon("Dread Scythe", "Scythe that instills dread in its victims", 4, 30, 200,
-                        52),
-                new Armor("Dreadlord's Plate", "Plate armor with dread-infused aura", 4, 30, 200, 52,
-                        60)));
-
-        bossEnemies.add(new Enemy("Thunderclap Serpent", 40, 1800, 850, 850, 180, 95, 6, 4, 800,
-                new Weapon("Thunder Fang", "Fangs that summon thunderstorms", 5, 40, 260, 70),
-                new Armor("Serpent Scales", "Scales with electrically charged shield", 5, 40, 260, 70,
-                        100)));
-
-        bossEnemies.add(new Enemy("The Undead Slayer", 50, 2300, 1050, 1050, 230, 120, 6, 5, 1000,
-                new Weapon("Slayer's Blade", "Blade that banishes undead spirits", 6, 50, 350, 100),
-                new Armor("Slayer's Armor", "Armor with holy aura to repel undead", 6, 50, 350, 120,
-                        150)));
+        System.out.println(player.getName() + " dealt " + playerDamage + " damage to itself!");
     }
 
+    private void enemyDefeated(Enemy enemy) {
+        enemy.setHealth(enemy.getMaxHealth());
+        enemy.setAttack(enemy.getAttack() - enemy.getWeapon().getAttackBoost());
+        enemy.setDefense(enemy.getDefense() - enemy.getArmor().getDefenseBoost());
+        enemy.setHealth(enemy.getHealth() - enemy.getArmor().getHealthBoost());
+        System.out.println("\n" + enemy.getName() + " has been defeated!");
+        player.setGold(player.getGold() + enemy.getGold());
+        player.setExp(player.getExp() + enemy.getExp());
+        System.out.println(player.getName() + " have gained " + enemy.getExp() + " EXP!");
+        System.out.println(player.getName() + " have gained " + enemy.getGold() + " Gold!");
+        enemyDropRate(enemy);
 
-    
+        handleContinueOptions();
+    }
+
+    private void handleContinueOptions() {
+        try {
+            System.out.println("""
+
+                    <-------------->
+                     [1] Continue
+                     [2] Inventory
+                     [3] Return
+                    """);
+            System.out.print("Choose: ");
+            int continueChoice = scan.nextInt();
+
+            switch (continueChoice) {
+                case 1 -> {
+                    // Continue to the next stage
+                }
+                case 2 ->
+                    inventory();
+                case 3 ->
+                    mainMenu();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void areaCleared(int areaID) {
+        System.out.println("\nArea cleared! " + populate.getAreas().get(areaID - 1).getName() + " has been conquered!");
+        populate.getAreas().get(areaID - 1).complete();
+        if (populate.getAreas().get(areaID - 1).isCompleted()) {
+            player.setExp(player.getExp() + populate.getAreas().get(areaID - 1).getCompletionXP());
+            player.setGold(player.getGold() + populate.getAreas().get(areaID - 1).getCompletionGold());
+            System.out.println(player.getName() + " have gained "
+                    + populate.getAreas().get(areaID - 1).getCompletionXP() + " EXP!");
+            System.out.println(player.getName() + " have gained "
+                    + populate.getAreas().get(areaID - 1).getCompletionGold() + " Gold!");
+        }
+        if (populate.getAreas().get(areaID - 1).getAreaID() < populate.getAreas().size()) {
+            System.out.println(player.getName() + "  have unlocked the next area!");
+            populate.getAreas().get(areaID).unlock();
+        } else {
+            System.out.println("""
+                    <--------------------------------------------------------------------------------------->
+                                You have conquered the kingdom and restored balance to the land.
+                                  The shadows have been vanquished, and the kingdom is reborn.
+                    <--------------------------------------------------------------------------------------->
+                    """);
+            mainMenu();
+        }
+    }
+
+    private void enemyDropRate(Enemy enemy) {
+        int dropChance;
+        dropChance = switch (enemy.getRarity()) {
+            case 1 ->
+                50;
+            case 2 ->
+                40;
+            case 3 ->
+                30;
+            case 4 ->
+                20;
+            default ->
+                10;
+        };
+
+        int chance = rand.nextInt(100);
+        if (chance < dropChance) {
+            int itemChance = rand.nextInt(2);
+            if (itemChance == 0) {
+                Weapon droppedWeapon = enemy.getWeapon();
+                weapons.addFirst(droppedWeapon);
+                System.out.println("\n" + player.getName() + " have obtained " + droppedWeapon.getName() + "!");
+            } else {
+                Armor droppedArmor = enemy.getArmor();
+                armors.addFirst(droppedArmor);
+                System.out.println("\n" + player.getName() + " have obtained " + droppedArmor.getName() + "!");
+            }
+        }
+    }
+
+    private void shop() {
+        try {
+            System.out.println("\n<--- Aaron's Shop --->");
+            System.out.println("Hello " + player.getName() + "! Welcome to my Shop!");
+            System.out.println("Gold: " + player.getGold());
+            System.out.println("""
+
+                    <--- Shop --->
+                    [1] Buy
+                    [2] Sell
+                    [0] Return
+                    """);
+            System.out.print("Choose: ");
+            int choose = scan.nextInt();
+
+            switch (choose) {
+                case 1 ->
+                    buy();
+                case 2 ->
+                    sell();
+                case 0 ->
+                    mainMenu();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void buy() {
+        try {
+            System.out.println("""
+
+                    <--- Buy --->
+                    [1] Weapons
+                    [2] Armors
+                    [3] Items
+                    [0] Return
+                    """);
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+
+            switch (choice) {
+                case 1 ->
+                    buyWeapon();
+                case 2 ->
+                    buyArmor();
+                case 3 ->
+                    buyItems();
+                case 0 ->
+                    shop();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void buyWeapon() {
+        try {
+            for (int i = 0; i < populate.getStoreWeapons().size(); i++) {
+                System.out
+                        .println((i + 1) + ". " + populate.getStoreWeapons().get(i).getName() + " || "
+                                + populate.getStoreWeapons().get(i).getDescription() + " || "
+                                + populate.getStoreWeapons().get(i).getAttackBoost()
+                                + " Attack || $" + populate.getStoreWeapons().get(i).getCost()
+                                + " || Required Level: "
+                                + populate.getStoreWeapons().get(i).getLevelRequirement());
+            }
+            System.out.print("Choose: ");
+            int choose = scan.nextInt();
+            if (player.getLevel() >= populate.getStoreWeapons().get(choose).getLevelRequirement()) {
+                if (player.getGold() > populate.getStoreWeapons().get(choose).getCost()) {
+                    player.setGold(player.getGold() - populate.getStoreWeapons().get(choose).getCost());
+                    weapons.addFirst(populate.getStoreWeapons().get(choose - 1));
+                } else if (player.getGold() < populate.getStoreWeapons().get(choose).getCost()) {
+                    System.out.println(player.getName() + " doesn't have enough gold!");
+                }
+            } else {
+                System.out.println(player.getName() + " needs to be at least level "
+                        + populate.getStoreWeapons().get(choose).getLevelRequirement()
+                        + " to buy this.");
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void buyArmor() {
+        try {
+            for (int i = 0; i < populate.getStoreArmor().size(); i++) {
+                System.out.println((i + 1) + ". " + populate.getStoreArmor().get(i).getName() + " || "
+                        + populate.getStoreArmor().get(i).getDescription() + " || "
+                        + populate.getStoreArmor().get(i).getDefenseBoost() + " Defense" + " || "
+                        + populate.getStoreArmor().get(i).getHealthBoost() + " Health" + " || $"
+                        + populate.getStoreArmor().get(i).getCost() + " || Required Level: "
+                        + populate.getStoreArmor().get(i).getLevelRequirement());
+            }
+            System.out.print("Choose: ");
+            int choose = scan.nextInt();
+            if (player.getLevel() >= populate.getStoreArmor().get(choose).getLevelRequirement()) {
+                if (player.getGold() > populate.getStoreArmor().get(choose).getCost()) {
+                    player.setGold(player.getGold() - populate.getStoreArmor().get(choose).getCost());
+                    armors.addFirst(populate.getStoreArmor().get(choose - 1));
+                } else if (player.getGold() < populate.getStoreArmor().get(choose).getCost()) {
+                    System.out.println(player.getName() + " doesn't have enough gold!");
+                }
+            } else {
+                System.out.println(player.getName() + " needs to be at least level "
+                        + populate.getStoreArmor().get(choose).getLevelRequirement() + " to buy this.");
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void buyItems() {
+        try {
+            for (int i = 0; i < populate.getStoreItems().size(); i++) {
+                System.out.println((i + 1) + ". " + populate.getStoreItems().get(i).getName() + " || "
+                        + populate.getStoreItems().get(i).getEffect() + " || $"
+                        + populate.getStoreItems().get(i).getCost());
+            }
+            System.out.print("Choose: ");
+            int choose = scan.nextInt();
+            if (player.getGold() > populate.getStoreItems().get(choose).getCost()) {
+                player.setGold(player.getGold() - populate.getStoreItems().get(choose).getCost());
+                items.addFirst(populate.getStoreItems().get(choose - 1));
+            } else if (player.getGold() < populate.getStoreItems().get(choose).getCost()) {
+                System.out.println(player.getName() + " don't have enough gold!");
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void sell() {
+        try {
+            System.out.println("""
+
+                    <--- Sell --->
+                    [1] Weapons
+                    [2] Armors
+                    [3] Items
+                    [0] Return
+                    """);
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+
+            switch (choice) {
+                case 1 ->
+                    sellWeapon();
+                case 2 ->
+                    sellArmor();
+                case 3 ->
+                    sellItems();
+                case 0 ->
+                    shop();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void sellWeapon() {
+        try {
+            for (int i = 0; i < weapons.size(); i++) {
+                System.out.println((i + 1) + ". " + weapons.get(i).getName() + " || "
+                        + weapons.get(i).getDescription() + " || "
+                        + weapons.get(i).getAttackBoost() + " Attack");
+            }
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+            player.setGold(player.getGold() + weapons.get(choice - 1).getCost());
+            weapons.remove(choice - 1);
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void sellArmor() {
+        try {
+            for (int i = 0; i < armors.size(); i++) {
+                System.out.println((i + 1) + ". " + armors.get(i).getName() + " || "
+                        + armors.get(i).getDescription() + " || "
+                        + armors.get(i).getDefenseBoost() + " Defense" + " || "
+                        + armors.get(i).getHealthBoost() + " Health");
+            }
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+            player.setGold(player.getGold() + armors.get(choice - 1).getCost());
+            armors.remove(choice - 1);
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void sellItems() {
+        try {
+            for (int i = 0; i < items.size(); i++) {
+                System.out.println((i + 1) + ". " + items.get(i).getName() + " || "
+                        + items.get(i).getEffect());
+            }
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+            player.setGold(player.getGold() + items.get(choice - 1).getCost());
+            items.remove(choice - 1);
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void inventory() {
+        try {
+            System.out.println("""
+
+                    <--- Inventory --->
+                    [1] Items
+                    [2] Weapons
+                    [3] Armors
+                    [0] Return
+                    """);
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+
+            switch (choice) {
+                case 1 ->
+                    items();
+                case 2 ->
+                    weapons();
+                case 3 ->
+                    armors();
+                case 0 ->
+                    scan.nextLine();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void items() {
+        try {
+            System.out.println("\n<--- Items --->");
+            for (int i = 0; i < items.size(); i++) {
+                System.out.println(
+                        (i + 1) + ". " + items.get(i).getName() + " || " + items.get(i).getEffect());
+            }
+            System.out.println("[1] Use Item");
+            System.out.println("[0] Return");
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+
+            switch (choice) {
+                case 1 ->
+                    useItem();
+                case 0 ->
+                    inventory();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void useItem() {
+        try {
+            if (items.isEmpty()) {
+                System.out.println("\n<--- Items --->");
+                System.out.println("No items available.");
+            } else {
+                System.out.println("\n<--- Items --->");
+                for (int i = 0; i < items.size(); i++) {
+                    System.out.println((i + 1) + ". " + items.get(i).getName() + " || " + items.get(i).getEffect());
+                }
+                System.out.print("Choose an item: ");
+                int choice = scan.nextInt();
+
+                if (choice < 1 || choice > items.size()) {
+                    System.out.println("Invalid choice.");
+                } else {
+                    Items selectedItem = items.get(choice - 1);
+                    int itemID = selectedItem.getItemID();
+                    applyEffect(itemID);
+                    items.remove(choice - 1);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void applyEffect(int itemID) {
+        switch (itemID) {
+            case 1 -> {
+                System.out.println("Using Health Potion");
+                System.out.println("20 Health Restored");
+                player.setHealth(player.getHealth() + 20);
+                if (player.getHealth() > player.getMaxHealth()) {
+                    player.setHealth(player.getMaxHealth());
+                }
+            }
+            case 2 -> {
+                System.out.println("Using Mana Potion");
+                System.out.println("10 Mana Restored");
+                player.setMana(player.getMana() + 20);
+                if (player.getMana() > player.getMaxMana()) {
+                    player.setMana(player.getMaxMana());
+                }
+            }
+            case 3 -> {
+                System.out.println("Using Ethereal Elixir");
+                System.out.println("Restored 100 Health and Mana");
+                player.setHealth(player.getHealth() + 100);
+                player.setMana(player.getMana() + 100);
+                if (player.getHealth() > player.getMaxHealth()) {
+                    player.setHealth(player.getMaxHealth());
+                }
+                if (player.getMana() > player.getMaxMana()) {
+                    player.setMana(player.getMaxMana());
+                }
+            }
+            case 4 -> {
+                System.out.println("Using Phoenix Feather");
+                System.out.println("Your health has been fully restored!");
+                player.setHealth(player.getMaxHealth());
+            }
+            case 5 -> {
+                System.out.println("Using Orb of Enlightenment");
+                System.out.println("Gained 100 EXP");
+                player.setExp(player.getExp() + 100);
+                check();
+            }
+            default ->
+                System.out.println("Unknown item ID: " + itemID);
+        }
+    }
+
+    private void weapons() {
+        try {
+            System.out.println("\n<--- Weapons --->");
+            for (int i = 0; i < weapons.size(); i++) {
+                System.out.println(
+                        (i + 1) + ". " + weapons.get(i).getName() + " || "
+                                + weapons.get(i).getDescription() + " || "
+                                + weapons.get(i).getAttackBoost() + " Attack");
+            }
+            System.out.println("[1] Equip Weapon");
+            System.out.println("[0] Return");
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+
+            switch (choice) {
+                case 1 ->
+                    equipWeapon();
+                case 0 ->
+                    inventory();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void equipWeapon() {
+        try {
+            if (weapons.isEmpty()) {
+                System.out.println("No weapons available.");
+            } else {
+                System.out.println("\n<--- Weapons --->");
+                for (int i = 0; i < weapons.size(); i++) {
+                    System.out.println(
+                            (i + 1) + ". " + weapons.get(i).getName() + " || "
+                                    + weapons.get(i).getDescription() + " || "
+                                    + weapons.get(i).getAttackBoost() + " Attack");
+                }
+                System.out.print("Choose: ");
+                int choice = scan.nextInt();
+                weapons.addFirst(player.getWeapon());
+                player.setWeapon(weapons.get(choice - 1));
+                weapons.remove(choice - 1);
+                player.setAttack(player.getAttack() + weapons.get(choice - 1).getAttackBoost());
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void armors() {
+        try {
+            System.out.println("\n<--- Armor --->");
+            for (int i = 0; i < armors.size(); i++) {
+                System.out.println(
+                        (i + 1) + ". " + armors.get(i).getName() + " || "
+                                + armors.get(i).getDescription() + " || "
+                                + armors.get(i).getDefenseBoost() + " Defense" + " || "
+                                + armors.get(i).getHealthBoost() + " Health");
+            }
+            System.out.println("[1] Equip Armor");
+            System.out.println("[0] Return");
+            System.out.print("Choose: ");
+            int choice = scan.nextInt();
+
+            switch (choice) {
+                case 1 ->
+                    equipArmor();
+                case 0 ->
+                    inventory();
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void equipArmor() {
+        try {
+            if (armors.isEmpty()) {
+                System.out.println("No armors available.");
+            } else {
+                System.out.println("\n<--- Armor --->");
+                for (int i = 0; i < armors.size(); i++) {
+                    System.out.println(
+                            (i + 1) + ". " + armors.get(i).getName() + " || "
+                                    + armors.get(i).getDescription()
+                                    + " || " + armors.get(i).getDefenseBoost() + " Defense" + " || "
+                                    + armors.get(i).getHealthBoost() + " Health");
+                }
+                System.out.print("Choose: ");
+                int choice = scan.nextInt();
+                armors.addFirst(player.getArmor());
+                player.setArmor(armors.get(choice - 1));
+                armors.remove(choice - 1);
+                player.setDefense(player.getDefense() + armors.get(choice - 1).getDefenseBoost());
+                player.setHealth(player.getHealth() + armors.get(choice - 1).getHealthBoost());
+            }
+        } catch (Exception e) {
+            System.out.println("Please choose a valid option!");
+        }
+    }
+
+    private void abilities() {
+        if (abilities.isEmpty()) {
+            System.out.println("\n<--- Abilities --->");
+            System.out.println("No abilities available.");
+        } else {
+            System.out.println("\n<--- Abilities --->");
+            for (int i = 0; i < abilities.size(); i++) {
+                System.out.println((i + 1) + ". " + abilities.get(i).getName() + " || " + abilities.get(i).getEffect()
+                        + " || " + abilities.get(i).getManaCost() + " Mana");
+            }
+        }
+    }
+
+    private void stats() {
+        System.out.println("\n<--- " + player.getName() + "'s Stats --->");
+        System.out.println("Level: " + player.getLevel());
+        System.out.println("EXP: " + player.getExp());
+        System.out.println("Health: " + player.getHealth() + " / " + player.getMaxHealth());
+        System.out.println("Mana: " + player.getMana() + " / " + player.getMaxMana());
+        System.out.println("Attack: " + player.getAttack());
+        System.out.println("Defense: " + player.getDefense());
+        System.out.println("Gold: " + player.getGold());
+        System.out.println("Weapon: " + player.getWeapon().getName());
+        System.out.println("Armor: " + player.getArmor().getName());
+    }
+
+    private void saveGame() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("savegame.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(player);
+            out.writeObject(populate);
+            out.close();
+            fileOut.close();
+            System.out.println("Game saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving game: " + e.getMessage());
+        }
+    }
+
+    private void loadGame() {
+        try {
+            FileInputStream fileIn = new FileInputStream("savegame.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            player = (Player) in.readObject();
+            populate = (Populate) in.readObject();
+            in.close();
+            fileIn.close();
+            System.out.println("Game loaded successfully.");
+            mainMenu();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Game save not found.");
+            System.out.println();
+            start();
+        }
+    }
+
+    private void exitGame() {
+        saveGame();
+        System.out.println("Farewell Warrior...");
+        System.exit(0);
+    }
 }
