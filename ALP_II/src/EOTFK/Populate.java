@@ -187,123 +187,127 @@ public class Populate implements Serializable {
     public void createCitadelEnemy() {
         citadelEnemies.add(new Enemy("Bonecrusher Warrior", 2, 50, 35, 35, 8, 4, 1, 1, 10,
                 
-                new Weapon("Bone Axe", "A powerful axe made from bone", 17, 2, 10, 12),
-                new Armor("Bone Armor", "Armor crafted from sturdy bones", 17, 2, 10, 6,
+                new Weapon("Bone Axe", "A powerful axe made from bone", 17, 2, 30, 5),
+                new Armor("Bone Armor", "Armor crafted from sturdy bones", 17, 2, 30, 5,
                         10)));
         citadelEnemies.add(new Enemy("Cursed Phantom Prince", 4, 75, 50, 50, 11, 7, 1, 1, 20,
-                new Weapon("Phantom Blade", "A spectral blade that curses its victims", 18, 4, 20,
-                        19),
-                new Armor("Phantom Cloak", "Cloak that renders the wearer ethereal", 18, 4, 20, 8,
-                        15)));
+                new Weapon("Phantom Blade", "A spectral blade that curses its victims", 18, 4, 40,
+                        8),
+                new Armor("Phantom Cloak", "Cloak that renders the wearer ethereal", 18, 4, 40, 8,
+                        12)));
         citadelEnemies.add(new Enemy("Necroshade Princess", 6, 100, 70, 70, 15, 8, 1, 1, 30,
-                new Weapon("Necro Staff", "Staff imbued with life-draining magic", 19, 6, 30, 15),
-                new Armor("Shade Robe", "Robe that offers protection against shadows", 19, 6, 30, 12,
-                        20)));
+                new Weapon("Necro Staff", "Staff imbued with life-draining magic", 19, 6, 40, 10),
+                new Armor("Shade Robe", "Robe that offers protection against shadows", 19, 6, 40, 10,
+                        15)));
         citadelEnemies.add(new Enemy("Titan of Shadows", 8, 150, 90, 90, 18, 12, 1, 1, 40,
                 new Weapon("Shadow Hammer", "Massive hammer that stuns enemies with darkness", 20, 8,
-                        40, 22),
-                new Armor("Titan Armor", "Heavy armor with shadow-infused shield", 20, 8, 40, 13,
-                        30)));
+                        50, 12),
+                new Armor("Titan Armor", "Heavy armor with shadow-infused shield", 20, 8, 50, 13,
+                        18)));
     }
-
+    
     public void createWoodsEnemy() {
         woodsEnemies.add(new Enemy("Direbane Wolf", 12, 325, 275, 275, 35, 25, 2, 2, 210,
-                new Weapon("Dire Fangs", "Sharp fangs that cause bleeding", 21, 5, 100, 100),
-                new Armor("Wolf Pelt", "Pelt providing evasion against attacks", 21, 5, 100, 100,
-                        100)));
+                new Weapon("Dire Fangs", "Sharp fangs that cause bleeding", 21, 5, 80, 22),
+                new Armor("Wolf Pelt", "Pelt providing evasion against attacks", 21, 5, 80, 22,
+                        27)));
         woodsEnemies.add(new Enemy("Spectral Wraith", 14, 350, 295, 295, 38, 29, 2, 2, 220,
-                new Weapon("Wraith Claws", "Claws that inflict fear in enemies", 22, 5, 100, 100),
-                new Armor("Spectral Veil", "Veil granting incorporeal protection", 22, 5, 100, 100,
-                        100)));
+                new Weapon("Wraith Claws", "Claws that inflict fear in enemies", 22, 5, 90, 24),
+                new Armor("Spectral Veil", "Veil granting incorporeal protection", 22, 5, 90, 23,
+                        30)));
         woodsEnemies.add(new Enemy("Ethereal Forest Spirit", 16, 375, 310, 310, 42, 32, 2, 2, 230,
-                new Weapon("Spirit Branch", "Branch with entangling properties", 23, 5, 100, 100),
-                new Armor("Forest Essence", "Essence providing regeneration", 23, 5, 100, 100,
-                        100)));
+                new Weapon("Spirit Branch", "Branch with entangling properties", 23, 5, 100, 27),
+                new Armor("Forest Essence", "Essence providing regeneration", 23, 5, 100, 27,
+                        33)));
         woodsEnemies.add(new Enemy("Duskblade Elf", 18, 400, 330, 330, 45, 35, 2, 2, 240,
-                new Weapon("Duskblade", "Blade coated with poison", 24, 5, 100, 100),
-                new Armor("Elven Armor", "Armor enhancing agility", 24, 5, 100, 100,
-                        100)));
+                new Weapon("Duskblade", "Blade coated with poison", 24, 5, 110, 30),
+                new Armor("Elven Armor", "Armor enhancing agility", 24, 5, 110, 30,
+                        35)));
     }
-
+   
     public void createCavernsEnemy() {
         cavernsEnemies.add(new Enemy("Goblin Warlock", 22, 825, 475, 475, 90, 50, 3, 3, 410,
-                new Weapon("Warlock Staff", "Staff imbued with hexing magic", 25, 5, 100, 100),
-                new Armor("Goblin Robes", "Robes providing magic resistance", 25, 5, 100, 100, 100)));
+                new Weapon("Warlock Staff", "Staff imbued with hexing magic", 25, 5, 150, 37),
+                new Armor("Goblin Robes", "Robes providing magic resistance", 25, 5, 150, 40, 43)));
         cavernsEnemies.add(new Enemy("Ogre Mauler", 24, 850, 500, 500, 93, 52, 3, 3, 420,
-                new Weapon("Maul", "Heavy maul for crushing foes", 26, 5, 100, 100),
-                new Armor("Ogre Hide", "Thick hide providing toughness", 26, 5, 100, 100, 100)));
+                new Weapon("Maul", "Heavy maul for crushing foes", 26, 5, 160, 40),
+                new Armor("Ogre Hide", "Thick hide providing toughness", 26, 5, 160, 42, 45)));
         cavernsEnemies.add(new Enemy("Orc Overlord", 26, 900, 525, 525, 95, 55, 3, 3, 430,
-                new Weapon("Overlord Axe", "Massive axe wielded by orc overlords", 27, 5, 100, 100),
-                new Armor("Orc Plate", "Plate armor enhancing strength", 27, 5, 100, 100, 100)));
+                new Weapon("Overlord Axe", "Massive axe wielded by orc overlords", 27, 5, 170, 45),
+                new Armor("Orc Plate", "Plate armor enhancing strength", 27, 5, 170, 45, 48)));
         cavernsEnemies.add(new Enemy("Troll Ravager", 28, 925, 575, 575, 110, 58, 3, 3, 440,
-                new Weapon("Ravager Club", "Club used by trolls for smashing", 29, 5, 100, 100),
-                new Armor("Troll Armor", "Armor providing regeneration", 29, 5, 100, 100, 100)));
+                new Weapon("Ravager Club", "Club used by trolls for smashing", 29, 5, 180, 48),
+                new Armor("Troll Armor", "Armor providing regeneration", 29, 5, 180, 50, 50)));
     }
+     
 
     public void createPeaksEnemy() {
         peaksEnemies.add(new Enemy("Frostfire Wyvern", 32, 1325, 675, 675, 133, 72, 4, 4, 610,
-                new Weapon("Frostfire Breath", "Freezes and burns enemies", 30, 5, 100, 100),
-                new Armor("Wyvern Scales", "Scales providing elemental resistance", 30, 5, 100, 100,
-                        100)));
+                new Weapon("Frostfire Breath", "Freezes and burns enemies", 30, 5, 210, 55),
+                new Armor("Wyvern Scales", "Scales providing elemental resistance", 30, 5, 210, 55,
+                        65)));
 
         peaksEnemies.add(new Enemy("Glacial Dragon", 34, 1350, 700, 700, 135, 75, 4, 4, 620,
-                new Weapon("Glacial Claws", "Claws with freezing power", 31, 5, 100, 100),
-                new Armor("Dragonhide", "Tough hide with frost aura", 31, 5, 100, 100, 100)));
+                new Weapon("Glacial Claws", "Claws with freezing power", 31, 5, 220, 57),
+                new Armor("Dragonhide", "Tough hide with frost aura", 31, 5, 220, 58, 70)));
 
         peaksEnemies.add(new Enemy("Inferno Elemental", 36, 1375, 750, 750, 138, 77, 4, 4, 630,
-                new Weapon("Inferno Flame", "Flames that engulf and burn", 32, 5, 100, 100),
-                new Armor("Flame Core", "Core emitting a shield of fire", 32, 5, 100, 100, 100)));
+                new Weapon("Inferno Flame", "Flames that engulf and burn", 32, 5, 230, 60),
+                new Armor("Flame Core", "Core emitting a shield of fire", 32, 5, 230, 60, 75)));
 
         peaksEnemies.add(new Enemy("Earthshatter Golem", 38, 1400, 775, 775, 142, 80, 4, 4, 640,
-                new Weapon("Earthshatter Fist", "Fist causing seismic shockwaves", 33, 5, 100, 100),
-                new Armor("Golem Stone", "Stone with an earth-shielding property", 33, 5, 100, 100,
-                        100)));
+                new Weapon("Earthshatter Fist", "Fist causing seismic shockwaves", 33, 5, 240, 63),
+                new Armor("Golem Stone", "Stone with an earth-shielding property", 33, 5, 240, 62,
+                        80)));
     }
 
     public void createDepthsEnemy() {
         depthsEnemies.add(new Enemy("Abyssal Nightmare", 42, 1850, 875, 875, 182, 98, 5, 5, 810,
-                new Weapon("Nightmare Scythe", "Scythe inducing fear", 34, 5, 100, 100),
-                new Armor("Abyssal Shroud", "Shroud emitting darkness aura", 34, 5, 100, 100, 100)));
+                new Weapon("Nightmare Scythe", "Scythe inducing fear", 34, 5, 270, 73),
+                new Armor("Abyssal Shroud", "Shroud emitting darkness aura", 34, 5, 270, 72, 110)));
 
         depthsEnemies.add(new Enemy("Voidshade Demon", 44, 1875, 50, 50, 185, 100, 5, 5, 820,
-                new Weapon("Void Claws", "Claws draining life force", 35, 5, 100, 100),
-                new Armor("Void Armor", "Armor providing shielding from void", 35, 5, 100, 100, 100)));
+                new Weapon("Void Claws", "Claws draining life force", 35, 5, 280, 75),
+                new Armor("Void Armor", "Armor providing shielding from void", 35, 5, 280, 75, 115)));
 
         depthsEnemies.add(new Enemy("Soul Devourer", 46, 1900, 50, 50, 189, 103, 5, 5, 830,
-                new Weapon("Soul Reaver", "Reaver absorbing souls", 36, 5, 100, 100),
-                new Armor("Devourer Armor", "Armor with life-stealing properties", 36, 5, 100, 100,
-                        100)));
+                new Weapon("Soul Reaver", "Reaver absorbing souls", 36, 5, 290, 77),
+                new Armor("Devourer Armor", "Armor with life-stealing properties", 36, 5, 290, 78,
+                        120)));
 
         depthsEnemies.add(new Enemy("Cataclysm Bringer", 48, 1925, 50, 50, 195, 105, 5, 5, 840,
-                new Weapon("Cataclysm Blade", "Blade bringing destruction", 37, 5, 100, 100),
-                new Armor("Cataclysm Plate", "Plate emitting cataclysmic aura", 37, 5, 100, 100, 100)));
+                new Weapon("Cataclysm Blade", "Blade bringing destruction", 37, 5, 300, 82),
+                new Armor("Cataclysm Plate", "Plate emitting cataclysmic aura", 37, 5, 300, 80, 125)));
     }
-
+    
     public void createBoss() {
         bossEnemies.add(new Enemy("The Dark Knight", 10, 300, 250, 250, 30, 20, 6, 1, 200,
-                new Weapon("Dark Sword", "Sword that slashes through darkness", 2, 10, 200, 30),
-                new Armor("Knight's Armor", "Armor worn by the legendary dark knight", 2, 20, 100, 20,
-                        50)));
+                new Weapon("Dark Sword", "Sword that slashes through darkness", 2, 10, 70, 20),
+                new Armor("Knight's Armor", "Armor worn by the legendary dark knight", 2, 10, 70, 20,
+                        25)));
 
         bossEnemies.add(new Enemy("Lunar Werewolf", 20, 800, 450, 450, 80, 45, 6, 2, 400,
-                new Weapon("Lunar Claws", "Claws imbued with the power of the moon", 3, 40, 200, 200),
-                new Armor("Werewolf Fur", "Fur that grants lunar regeneration", 3, 40, 200, 200,
-                        200)));
+                new Weapon("Lunar Claws", "Claws imbued with the power of the moon", 3, 40, 130, 35),
+                new Armor("Werewolf Fur", "Fur that grants lunar regeneration", 3, 40, 130, 37,
+                        40)));
 
         bossEnemies.add(new Enemy("Chthonic Dreadlord", 30, 1300, 650, 650, 130, 70, 6, 3, 600,
-                new Weapon("Dread Scythe", "Scythe that instills dread in its victims", 4, 60, 300,
-                        300),
-                new Armor("Dreadlord's Plate", "Plate armor with dread-infused aura", 4, 60, 300, 300,
-                        300)));
+                new Weapon("Dread Scythe", "Scythe that instills dread in its victims", 4, 60, 200,
+                        52),
+                new Armor("Dreadlord's Plate", "Plate armor with dread-infused aura", 4, 60, 200, 52,
+                        60)));
 
         bossEnemies.add(new Enemy("Thunderclap Serpent", 40, 1800, 850, 850, 180, 95, 6, 4, 800,
-                new Weapon("Thunder Fang", "Fangs that summon thunderstorms", 5, 80, 400, 400),
-                new Armor("Serpent Scales", "Scales with electrically charged shield", 5, 80, 400, 400,
-                        400)));
+                new Weapon("Thunder Fang", "Fangs that summon thunderstorms", 5, 80, 260, 70),
+                new Armor("Serpent Scales", "Scales with electrically charged shield", 5, 80, 260, 70,
+                        100)));
 
         bossEnemies.add(new Enemy("The Undead Slayer", 50, 2300, 1050, 1050, 230, 120, 6, 5, 1000,
-                new Weapon("Slayer's Blade", "Blade that banishes undead spirits", 6, 100, 500, 500),
-                new Armor("Slayer's Armor", "Armor with holy aura to repel undead", 6, 100, 500, 500,
-                        500)));
+                new Weapon("Slayer's Blade", "Blade that banishes undead spirits", 6, 100, 350, 100),
+                new Armor("Slayer's Armor", "Armor with holy aura to repel undead", 6, 100, 350, 120,
+                        150)));
     }
+
+
+    
 }
