@@ -163,7 +163,6 @@ public class Menu {
     private void battle(int areaID) {
         int stage = 0;
         do {
-            check();
             stage++;
 
             if (stage == 10) {
@@ -175,7 +174,7 @@ public class Menu {
             Enemy enemy = getEnemyForStage(stage, areaID);
 
             displayStageInfo(enemy);
-    
+
             if (stage == 11) {
                 areaCleared(areaID);
                 return;
@@ -272,8 +271,8 @@ public class Menu {
 
             if (player.getHealth() <= 0) {
                 System.out.println("Immortality has its limits...");
+                player.setHealth(player.getMaxHealth());
                 mainMenu();
-                return;
             }
         }
     }
@@ -289,8 +288,10 @@ public class Menu {
             int choice = scan.nextInt();
 
             switch (choice) {
-                case 1 -> attack(enemy);
-                case 2 -> useAbility(enemy);
+                case 1 ->
+                    attack(enemy);
+                case 2 ->
+                    useAbility(enemy);
                 case 3 -> {
                     useItem();
                     enemyAttack(enemy);
@@ -484,7 +485,7 @@ public class Menu {
                 for (int i = 0; i < abilities.size(); i++) {
                     System.out.println(
                             (i + 1) + ". " + abilities.get(i).getName() + " || " + abilities.get(i).getEffect() + " || "
-                                    + abilities.get(i).getManaCost() + " Mana");
+                            + abilities.get(i).getManaCost() + " Mana");
                 }
                 System.out.print("Choose an ability: ");
                 int choice = scan.nextInt();
@@ -692,12 +693,16 @@ public class Menu {
     }
 
     private void enemyDefeated(Enemy enemy) {
+        enemy.setAttack(enemy.getAttack() - enemy.getWeapon().getAttackBoost());
+        enemy.setDefense(enemy.getDefense() - enemy.getArmor().getDefenseBoost());
+        enemy.setMaxHealth(enemy.getMaxHealth() - enemy.getArmor().getHealthBoost());
         enemy.setHealth(enemy.getMaxHealth());
         System.out.println("\n" + enemy.getName() + " has been defeated!");
         player.setGold(player.getGold() + enemy.getGold());
         player.setExp(player.getExp() + enemy.getExp());
         System.out.println(player.getName() + " have gained " + enemy.getExp() + " EXP!");
         System.out.println(player.getName() + " have gained " + enemy.getGold() + " Gold!");
+        check();
         enemyDropRate(enemy);
         handleContinueOptions();
     }
@@ -718,8 +723,10 @@ public class Menu {
                 case 1 -> {
                     return;
                 }
-                case 2 -> inventory();
-                case 3 -> mainMenu();
+                case 2 ->
+                    inventory();
+                case 3 ->
+                    mainMenu();
             }
         } catch (Exception e) {
             System.out.println("Please choose a valid option!");
@@ -1121,8 +1128,8 @@ public class Menu {
             for (int i = 0; i < weapons.size(); i++) {
                 System.out.println(
                         (i + 1) + ". " + weapons.get(i).getName() + " || "
-                                + weapons.get(i).getDescription() + " || "
-                                + weapons.get(i).getAttackBoost() + " Attack");
+                        + weapons.get(i).getDescription() + " || "
+                        + weapons.get(i).getAttackBoost() + " Attack");
             }
             System.out.println("[1] Equip Weapon");
             System.out.println("[0] Return");
@@ -1149,8 +1156,8 @@ public class Menu {
                 for (int i = 0; i < weapons.size(); i++) {
                     System.out.println(
                             (i + 1) + ". " + weapons.get(i).getName() + " || "
-                                    + weapons.get(i).getDescription() + " || "
-                                    + weapons.get(i).getAttackBoost() + " Attack");
+                            + weapons.get(i).getDescription() + " || "
+                            + weapons.get(i).getAttackBoost() + " Attack");
                 }
                 System.out.print("Choose: ");
                 int choice = scan.nextInt();
@@ -1170,9 +1177,9 @@ public class Menu {
             for (int i = 0; i < armors.size(); i++) {
                 System.out.println(
                         (i + 1) + ". " + armors.get(i).getName() + " || "
-                                + armors.get(i).getDescription() + " || "
-                                + armors.get(i).getDefenseBoost() + " Defense" + " || "
-                                + armors.get(i).getHealthBoost() + " Health");
+                        + armors.get(i).getDescription() + " || "
+                        + armors.get(i).getDefenseBoost() + " Defense" + " || "
+                        + armors.get(i).getHealthBoost() + " Health");
             }
             System.out.println("[1] Equip Armor");
             System.out.println("[0] Return");
@@ -1199,9 +1206,9 @@ public class Menu {
                 for (int i = 0; i < armors.size(); i++) {
                     System.out.println(
                             (i + 1) + ". " + armors.get(i).getName() + " || "
-                                    + armors.get(i).getDescription()
-                                    + " || " + armors.get(i).getDefenseBoost() + " Defense" + " || "
-                                    + armors.get(i).getHealthBoost() + " Health");
+                            + armors.get(i).getDescription()
+                            + " || " + armors.get(i).getDefenseBoost() + " Defense" + " || "
+                            + armors.get(i).getHealthBoost() + " Health");
                 }
                 System.out.print("Choose: ");
                 int choice = scan.nextInt();
